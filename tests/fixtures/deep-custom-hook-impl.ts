@@ -13,10 +13,14 @@ function usePolling(fn: () => void) {
   useEffect(() => { fn(); }, [fn]);
 }
 
+function useDeepPoll(fn: () => void) {
+  usePolling(fn);
+}
+
 export function useFetchAndPoll(id: string) {
   const [data, setData] = useState<unknown>(null);
   const memoId = useMemo(() => id.toLowerCase(), [id]);
-  usePolling(() => {
+  useDeepPoll(() => {
     fetch(`/api/${memoId}`).then((r) => r.json()).then(setData);
   });
   return data;

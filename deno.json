@@ -22,7 +22,7 @@
     "test": "deno test --allow-read --allow-env --allow-run --allow-write --allow-ffi",
     "lint": "deno run -A npm:oxlint .",
     "fmt": "deno fmt",
-    "cli": "deno run --allow-read --allow-env src/cli.ts",
+    "cli": "deno run --allow-read --allow-env --allow-sys --allow-ffi --allow-run src/cli.ts",
     "build:npm": "deno run -A npm:tsdown",
     "build:bin": "deno compile --allow-read --allow-env --output=bin/hook-o-gnese src/cli.ts",
     "publish:jsr": "deno publish",
