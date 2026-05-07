@@ -1,4 +1,13 @@
 #!/usr/bin/env -S deno run -A
+/**
+ * Deno entrypoint for the `hook-o-gnese` CLI.
+ *
+ * Parses argv, wires up Deno's filesystem and stdio handles, and delegates the
+ * actual linting to {@link runCli} from `./cli-core.ts`. Run via
+ * `deno task cli` or the compiled `bin/hook-o-gnese` binary.
+ *
+ * @module
+ */
 import { parseArgs } from "@std/cli/parse-args";
 import { HELP, runCli } from "./cli-core.ts";
 import type { Severity } from "./engine.ts";
