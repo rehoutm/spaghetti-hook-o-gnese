@@ -1,6 +1,7 @@
 {
   "name": "@mrht/hook-o-gnese",
   "version": "0.0.4",
+  "license": "MIT",
   "nodeModulesDir": "auto",
   "exports": {
     ".": "./src/index.ts",
