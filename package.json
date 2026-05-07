@@ -3,39 +3,40 @@
   "version": "0.0.1",
   "description": "Score React hook complexity. Runs as oxlint plugin or standalone CLI.",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "bin": {
-    "hook-o-gnese": "./dist/cli.js"
+    "hook-o-gnese": "./dist/cli.mjs"
   },
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
     },
     "./engine": {
-      "import": "./dist/engine.js",
-      "types": "./dist/engine.d.ts"
+      "import": "./dist/engine.mjs",
+      "types": "./dist/engine.d.mts"
     }
   },
   "files": ["dist", "README.md", "LICENSE"],
   "keywords": ["oxlint", "oxlint-plugin", "react", "hooks", "complexity", "lint", "cli"],
   "peerDependencies": {
-    "oxlint": ">=1.0.0",
-    "typescript": ">=5.0.0"
+    "oxlint": ">=1.63.0",
+    "typescript": ">=6.0.0"
   },
   "peerDependenciesMeta": {
     "oxlint": { "optional": true }
   },
   "dependencies": {
-    "globby": "^14.0.0",
-    "oxc-parser": "^0.40.0"
+    "globby": "^16.2.0",
+    "oxc-parser": "^0.129.0"
   },
   "devDependencies": {
-    "tsdown": "^0.6.0",
-    "typescript": "^5.6.0",
-    "@oxlint/plugins": "^1.0.0"
+    "tsdown": "^0.21.10",
+    "typescript": "^6.0.3",
+    "@oxlint/plugins": "^1.63.0"
+  },
+  "engines": {
+    "node": ">=20.18.0"
   }
 }
