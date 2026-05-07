@@ -6,7 +6,7 @@
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "bin": {
-    "hook-o-gnese": "./dist/cli.mjs"
+    "hook-o-gnese": "dist/cli.mjs"
   },
   "exports": {
     ".": {
@@ -18,8 +18,20 @@
       "types": "./dist/engine.d.mts"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
-  "keywords": ["oxlint", "oxlint-plugin", "react", "hooks", "complexity", "lint", "cli"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "oxlint",
+    "oxlint-plugin",
+    "react",
+    "hooks",
+    "complexity",
+    "lint",
+    "cli"
+  ],
   "license": "MIT",
   "author": "Michal Rehout",
   "repository": {
@@ -38,7 +50,9 @@
     "typescript": ">=6.0.0"
   },
   "peerDependenciesMeta": {
-    "oxlint": { "optional": true }
+    "oxlint": {
+      "optional": true
+    }
   },
   "dependencies": {
     "globby": "^16.2.0",

@@ -1,6 +1,7 @@
 {
   "name": "@mrht/hook-o-gnese",
   "version": "0.0.1",
+  "nodeModulesDir": "auto",
   "exports": {
     ".": "./src/index.ts",
     "./cli": "./src/cli.ts",
@@ -16,9 +17,11 @@
     "typescript": "npm:typescript@^6.0.3",
     "globby": "npm:globby@^16.2.0",
     "oxlint": "npm:oxlint@^1.63.0",
-    "tsdown": "npm:tsdown@^0.21.10"
+    "tsdown": "npm:tsdown@^0.21.10",
+    "rollup-plugin-license": "npm:rollup-plugin-license@^3.7.1"
   },
   "tasks": {
+    "check": "deno check",
     "test": "deno test --allow-read --allow-env --allow-run --allow-write --allow-ffi --allow-sys --allow-net",
     "test:integration": "deno test --allow-all tests/integration/",
     "lint": "deno run -A npm:oxlint .",
@@ -31,7 +34,7 @@
     "dogfood:cli": "deno run -A src/cli.ts tests/fixtures/"
   },
   "fmt": { "exclude": ["dist/", "bin/", "node_modules/"] },
-  "exclude": ["dist/", "bin/", "node_modules/", "*.tsbuildinfo"],
+  "exclude": ["dist/", "bin/", "node_modules/", "*.tsbuildinfo", "tests/fixtures/"],
   "publish": {
     "include": ["src/", "deno.json", "README.md", "LICENSE"],
     "exclude": ["tests/", "scripts/", "tsdown.config.ts", "tsconfig.json", "*.test.ts"]
