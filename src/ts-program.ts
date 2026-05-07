@@ -28,10 +28,11 @@ export class TsProgramCache {
     let fileNames: string[] = [];
     if (configPath) {
       const cfg = ts.readConfigFile(configPath, ts.sys.readFile);
+      const configDir = configPath.slice(0, configPath.lastIndexOf("/"));
       const parsed = ts.parseJsonConfigFileContent(
         cfg.config,
         ts.sys,
-        this.rootDir,
+        configDir,
       );
       compilerOptions = { ...compilerOptions, ...parsed.options };
       fileNames = parsed.fileNames;

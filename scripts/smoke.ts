@@ -5,15 +5,17 @@
 
 import { parseSync } from "oxc-parser";
 import { walk as fsWalk } from "@std/fs";
-import { relative } from "@std/path";
+import { relative, resolve } from "@std/path";
 import { noFatEffects } from "../src/rules/no-fat-effects.ts";
 import { stateScatter } from "../src/rules/state-scatter.ts";
 import { hookCoupling } from "../src/rules/hook-coupling.ts";
+import { customHookDepth } from "../src/rules/custom-hook-depth.ts";
 
 const RULES = [
   { id: "hook-o-gnese/no-fat-effects", rule: noFatEffects },
   { id: "hook-o-gnese/state-scatter", rule: stateScatter },
   { id: "hook-o-gnese/hook-coupling", rule: hookCoupling },
+  { id: "hook-o-gnese/custom-hook-depth", rule: customHookDepth },
 ];
 
 interface Diag {
@@ -31,6 +33,7 @@ if (!root) {
 }
 
 const cwd = Deno.cwd();
+const targetRoot = resolve(root);
 const exts = new Set([".ts", ".tsx", ".jsx", ".js"]);
 const skipDirs = new Set(["node_modules", ".git", "dist", "build", "ios", "android", "__mocks__", "__tests__"]);
 
@@ -69,7 +72,7 @@ for await (const entry of fsWalk(root, { includeDirs: false, skip: [/node_module
     const context = {
       options: [],
       filename: entry.path,
-      cwd,
+      cwd: targetRoot,
       report: (d: { message: string; node: any }) => fileDiags.push(d),
     };
     const handlers: Record<string, (n: any) => void> = (rule as any).create(context);
