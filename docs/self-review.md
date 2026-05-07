@@ -264,3 +264,21 @@ The MVP is structurally sound. Rules → scoring → engine → formatters separ
 3. **Severity tiers are advertised but not implemented** (B2)
 
 Fix those three and v0.0.1 goes out the door without giving Vought any ammunition. Everything else is polish.
+
+---
+
+## Resolution log (post-review fixes)
+
+All three blockers fixed in commit following this review:
+
+- **B1 fixed.** `src/index.ts:10` and the README oxlint snippet now reference `dist/index.mjs` to match the tsdown bundle output.
+- **I4 fixed.** Engine now builds a per-file line-offset table (`buildLineOffsets`) and converts oxc-parser's byte offsets to 1-based `line:column` via binary search (`offsetToLineCol`). Verified live against rouvy-companion: diagnostics now report real positions (`9:3`, `49:3`, `97:3`, etc.) instead of universal `1:1`. Added regression test `cli: diagnostic locations are real (not 1:1 stub)` in `tests/cli_test.ts`.
+- **B2 fixed.** Each rule now consumes both `warn` and `error` thresholds from `DEFAULT_THRESHOLDS` (overridable via options `errorThreshold` / `errorMaxDepth`). Rules emit a per-diagnostic severity that the engine treats as **escalation-only** — a rule never downgrades the user's configured severity, only escalates `warn` → `error` when the score crosses the error tier. Verified on rouvy-companion: useArAppStateUpdate.ts (entropy 42) now correctly reports as error; mild fat effects (10.5, 11.5) stay as warn.
+
+**Bonus polish landed in the same pass:**
+
+- **P2 fixed.** `--no-error-on-warn` flag removed entirely from `cli-core.ts`, `cli.ts`, `cli.node.ts`, and `docs/cli.md`. The flag was a no-op (warnings already exited 0). Cleaner to remove than to invent new semantics.
+
+**Test count after fixes:** 54 passing (was 53; net +1 from the location regression test).
+
+**Still parked for v0.1:** I1, I2, I5, I6, I7, P1, P3, P4, P6, P8, P9, plus the heuristic-doc updates for I8/I9. Nothing in this list affects correctness of the published v0.0.1.

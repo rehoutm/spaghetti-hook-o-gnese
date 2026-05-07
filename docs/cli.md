@@ -8,7 +8,6 @@ Options:
   --config=<path>         path to .hookogneserc.json
   --type-aware            enable custom-hook-depth
   --rule=<id>=<sev>       override rule severity (off|warn|error). Repeatable.
-  --no-error-on-warn      do not exit non-zero on warnings
   --help, -h
 ```
 

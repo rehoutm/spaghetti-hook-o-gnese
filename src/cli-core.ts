@@ -26,7 +26,6 @@ Options:
   --config=<path>         path to .hookogneserc.json
   --type-aware            enable custom-hook-depth (slower, uses TS Compiler API)
   --rule=<id>=<sev>       override rule severity (off|warn|error). Repeatable.
-  --no-error-on-warn      do not exit non-zero on warnings
   --help, -h              show this message
 
 Examples:
@@ -41,7 +40,6 @@ export interface CliOptions {
   config?: string;
   typeAware: boolean;
   ruleOverrides: Array<{ id: string; severity: Severity }>;
-  noErrorOnWarn: boolean;
   cwd: string;
 }
 

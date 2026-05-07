@@ -35,15 +35,19 @@ Deno.test("cli: clean fixture exits 0", async () => {
   assertEquals(code, 0);
 });
 
-Deno.test("cli: fat-effect fixture exits warn (0 with --no-error-on-warn)", async () => {
+Deno.test("cli: fat-effect fixture escalates to error tier (score 23 ≥ 20)", async () => {
   const { stdout, code } = await runCli([
     "tests/fixtures/fat-effect.tsx",
     "--format=json",
   ]);
-  // warnings alone don't fail by default
-  assertEquals(code, 0);
+  // entropy 23 ≥ error threshold 20 → escalates to error → exit 1
+  assertEquals(code, 1);
   const parsed = JSON.parse(stdout);
-  assert(parsed.diagnostics.length >= 1);
+  const fat = parsed.diagnostics.find(
+    (d: any) => d.rule === "hook-o-gnese/no-fat-effects",
+  );
+  assert(fat, "expected no-fat-effects diagnostic");
+  assertEquals(fat.severity, "error");
 });
 
 Deno.test("cli: coupled-hooks fixture exits 1 (error severity)", async () => {
@@ -69,6 +73,24 @@ Deno.test("cli: --format=sarif emits valid JSON", async () => {
   ]);
   const parsed = JSON.parse(stdout);
   assertEquals(parsed.version, "2.1.0");
+});
+
+Deno.test("cli: diagnostic locations are real (not 1:1 stub)", async () => {
+  const { stdout } = await runCli([
+    "tests/fixtures/fat-effect.tsx",
+    "--format=json",
+  ]);
+  const parsed = JSON.parse(stdout);
+  const fatEffect = parsed.diagnostics.find(
+    (d: any) => d.rule === "hook-o-gnese/no-fat-effects",
+  );
+  assert(fatEffect, "expected a no-fat-effects diagnostic");
+  // The useEffect in fat-effect.tsx is well past line 1; if line === 1
+  // we've regressed to the byte-offset-as-line bug.
+  assert(
+    fatEffect.line > 1,
+    `expected line > 1, got ${fatEffect.line}:${fatEffect.column}`,
+  );
 });
 
 Deno.test("cli: --type-aware enables custom-hook-depth", async () => {

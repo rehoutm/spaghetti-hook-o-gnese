@@ -5,7 +5,7 @@ import type { Severity } from "./engine.ts";
 
 if (import.meta.main) {
   const args = parseArgs(Deno.args, {
-    boolean: ["help", "type-aware", "no-error-on-warn"],
+    boolean: ["help", "type-aware"],
     alias: { h: "help" },
     string: ["format", "config"],
     collect: ["rule"],
@@ -30,7 +30,6 @@ if (import.meta.main) {
       config: args.config as string | undefined,
       typeAware: !!args["type-aware"],
       ruleOverrides: overrides,
-      noErrorOnWarn: !!args["no-error-on-warn"],
       cwd: Deno.cwd(),
     },
     {

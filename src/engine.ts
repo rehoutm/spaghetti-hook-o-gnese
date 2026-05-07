@@ -31,12 +31,44 @@ function ruleNamespace(id: string): string {
   return id.replace(/^hook-o-gnese\//, "");
 }
 
-function getLoc(node: any): { line: number; column: number; endLine?: number; endColumn?: number } {
-  const start = node?.loc?.start ?? node?.start;
-  const end = node?.loc?.end ?? node?.end;
+function buildLineOffsets(source: string): number[] {
+  const offsets = [0];
+  for (let i = 0; i < source.length; i++) {
+    if (source.charCodeAt(i) === 10) offsets.push(i + 1);
+  }
+  return offsets;
+}
+
+function offsetToLineCol(
+  offset: number,
+  lineOffsets: number[],
+): { line: number; column: number } {
+  let lo = 0;
+  let hi = lineOffsets.length - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >>> 1;
+    if (lineOffsets[mid] <= offset) lo = mid;
+    else hi = mid - 1;
+  }
+  return { line: lo + 1, column: offset - lineOffsets[lo] + 1 };
+}
+
+function getLoc(
+  node: any,
+  lineOffsets: number[],
+): { line: number; column: number; endLine?: number; endColumn?: number } {
+  const startOffset = typeof node?.start === "number" ? node.start : undefined;
+  const endOffset = typeof node?.end === "number" ? node.end : undefined;
+  if (startOffset === undefined) {
+    return { line: 1, column: 1 };
+  }
+  const start = offsetToLineCol(startOffset, lineOffsets);
+  const end = endOffset !== undefined
+    ? offsetToLineCol(endOffset, lineOffsets)
+    : undefined;
   return {
-    line: start?.line ?? 1,
-    column: start?.column ?? 1,
+    line: start.line,
+    column: start.column,
     endLine: end?.line,
     endColumn: end?.column,
   };
@@ -76,15 +108,25 @@ export async function lintFile(
     sourceType: "module",
   });
 
+  const lineOffsets = buildLineOffsets(source);
+
   if (parsed.errors?.length) {
-    return parsed.errors.map((e: any) => ({
-      file: filePath,
-      rule: "parse-error",
-      severity: "error" as const,
-      message: e.message ?? "parse error",
-      line: e.labels?.[0]?.start?.line ?? 1,
-      column: e.labels?.[0]?.start?.column ?? 1,
-    }));
+    return parsed.errors.map((e: any) => {
+      const offset = typeof e.labels?.[0]?.start === "number"
+        ? e.labels[0].start
+        : undefined;
+      const loc = offset !== undefined
+        ? offsetToLineCol(offset, lineOffsets)
+        : { line: 1, column: 1 };
+      return {
+        file: filePath,
+        rule: "parse-error",
+        severity: "error" as const,
+        message: e.message ?? "parse error",
+        line: loc.line,
+        column: loc.column,
+      };
+    });
   }
 
   // Bail early on non-React files
@@ -108,12 +150,15 @@ export async function lintFile(
       options: ruleCfg.options ? [ruleCfg.options] : [],
       filename: filePath,
       cwd: config.cwd,
-      report(d: { message: string; node: any }) {
-        const loc = getLoc(d.node);
+      report(d: { message: string; node: any; severity?: "warn" | "error" }) {
+        const loc = getLoc(d.node, lineOffsets);
+        const cfgSev = ruleCfg.severity as "warn" | "error";
+        // Rule-emitted severity only escalates (warn → error); never downgrades.
+        const severity = d.severity === "error" ? "error" : cfgSev;
         localDiags.push({
           file: filePath,
           rule: ruleId,
-          severity: ruleCfg.severity as "warn" | "error",
+          severity,
           message: d.message,
           ...loc,
         });

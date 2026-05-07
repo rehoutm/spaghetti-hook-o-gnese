@@ -79,7 +79,7 @@ npm install -D @your-scope/hook-o-gnese oxlint
 ```jsonc
 // .oxlintrc.json
 {
-  "jsPlugins": ["./node_modules/@your-scope/hook-o-gnese/dist/index.js"],
+  "jsPlugins": ["./node_modules/@your-scope/hook-o-gnese/dist/index.mjs"],
   "rules": {
     "hook-o-gnese/no-fat-effects": "warn",
     "hook-o-gnese/state-scatter": "warn",

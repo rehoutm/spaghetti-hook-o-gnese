@@ -9,7 +9,6 @@ const { values, positionals } = parseArgs({
   options: {
     help: { type: "boolean", short: "h" },
     "type-aware": { type: "boolean" },
-    "no-error-on-warn": { type: "boolean" },
     format: { type: "string", default: "stylish" },
     config: { type: "string" },
     rule: { type: "string", multiple: true },
@@ -34,7 +33,6 @@ const code = await runCli(
     config: values.config,
     typeAware: !!values["type-aware"],
     ruleOverrides: overrides,
-    noErrorOnWarn: !!values["no-error-on-warn"],
     cwd: process.cwd(),
   },
   {
