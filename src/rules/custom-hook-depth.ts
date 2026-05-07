@@ -25,7 +25,8 @@ export const customHookDepth = {
   create(context: RuleContext) {
     const opts = (context.options[0] as Options | undefined) ?? {};
     const maxDepth = opts.maxDepth ?? DEFAULT_THRESHOLDS.customHookDepth.warn;
-    const cwd = context.cwd ?? Deno.cwd();
+    const g = globalThis as { Deno?: { cwd(): string }; process?: { cwd(): string } };
+    const cwd = context.cwd ?? g.process?.cwd() ?? g.Deno?.cwd() ?? ".";
     sharedCache ??= new TsProgramCache(cwd);
     const cache = sharedCache;
     const filename = context.filename;
