@@ -54,19 +54,23 @@ export function findReturnsJSX(node: Node): boolean {
 export function walk(
   node: Node,
   visit: (n: Node) => boolean | void,
+  seen: WeakSet<Node> = new WeakSet(),
 ): void {
+  if (seen.has(node)) return;
+  seen.add(node);
   const cont = visit(node);
   if (cont === false) return;
   for (const key in node) {
+    if (key === "parent") continue;
     const val = (node as any)[key];
     if (Array.isArray(val)) {
       for (const child of val) {
         if (child && typeof child === "object" && "type" in child) {
-          walk(child as Node, visit);
+          walk(child as Node, visit, seen);
         }
       }
     } else if (val && typeof val === "object" && "type" in val) {
-      walk(val as Node, visit);
+      walk(val as Node, visit, seen);
     }
   }
 }

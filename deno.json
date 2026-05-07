@@ -19,7 +19,8 @@
     "tsdown": "npm:tsdown@^0.6.0"
   },
   "tasks": {
-    "test": "deno test --allow-read --allow-env --allow-run --allow-write --allow-ffi",
+    "test": "deno test --allow-read --allow-env --allow-run --allow-write --allow-ffi --allow-sys --allow-net",
+    "test:integration": "deno test --allow-all tests/integration/",
     "lint": "deno run -A npm:oxlint .",
     "fmt": "deno fmt",
     "cli": "deno run --allow-read --allow-env --allow-sys --allow-ffi --allow-run src/cli.ts",
