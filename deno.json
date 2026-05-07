@@ -7,16 +7,16 @@
     "./engine": "./src/engine.ts"
   },
   "imports": {
-    "@std/assert": "jsr:@std/assert@1",
-    "@std/path": "jsr:@std/path@1",
-    "@std/cli": "jsr:@std/cli@1",
-    "@std/fs": "jsr:@std/fs@1",
-    "oxc-parser": "npm:oxc-parser@^0.40.0",
-    "@oxlint/plugins": "npm:@oxlint/plugins@^1.0.0",
-    "typescript": "npm:typescript@^5.6.0",
-    "globby": "npm:globby@^14.0.0",
-    "oxlint": "npm:oxlint@^1.0.0",
-    "tsdown": "npm:tsdown@^0.6.0"
+    "@std/assert": "jsr:@std/assert@^1.0.19",
+    "@std/path": "jsr:@std/path@^1.1.4",
+    "@std/cli": "jsr:@std/cli@^1.0.29",
+    "@std/fs": "jsr:@std/fs@^1.0.23",
+    "oxc-parser": "npm:oxc-parser@^0.129.0",
+    "@oxlint/plugins": "npm:@oxlint/plugins@^1.63.0",
+    "typescript": "npm:typescript@^6.0.3",
+    "globby": "npm:globby@^16.2.0",
+    "oxlint": "npm:oxlint@^1.63.0",
+    "tsdown": "npm:tsdown@^0.21.10"
   },
   "tasks": {
     "test": "deno test --allow-read --allow-env --allow-run --allow-write --allow-ffi --allow-sys --allow-net",
@@ -25,7 +25,7 @@
     "fmt": "deno fmt",
     "cli": "deno run --allow-read --allow-env --allow-sys --allow-ffi --allow-run src/cli.ts",
     "build:npm": "deno run -A npm:tsdown",
-    "build:bin": "deno compile --allow-read --allow-env --output=bin/hook-o-gnese src/cli.ts",
+    "build:bin": "deno compile --allow-read --allow-env --allow-sys --allow-ffi --output=bin/hook-o-gnese src/cli.ts",
     "publish:jsr": "deno publish",
     "dogfood:plugin": "deno run -A npm:oxlint tests/fixtures/",
     "dogfood:cli": "deno run -A src/cli.ts tests/fixtures/"

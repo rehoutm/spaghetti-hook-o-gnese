@@ -1,4 +1,3 @@
-import { join } from "@std/path";
 import type { EngineConfig, Severity } from "./engine.ts";
 
 const DEFAULT_RULES: Record<string, { severity: Severity; options?: unknown }> = {
@@ -22,18 +21,21 @@ interface FileConfig {
   typeAware?: boolean;
 }
 
+export type ReadTextFile = (path: string) => Promise<string>;
+
 export async function loadConfig(
   cwd: string,
-  configPath?: string,
+  configPath: string | undefined,
+  readTextFile: ReadTextFile,
 ): Promise<{ engine: EngineConfig; ignore: string[] }> {
   const candidates = configPath
     ? [configPath]
-    : [join(cwd, ".hookogneserc.json")];
+    : [`${cwd.replace(/\/$/, "")}/.hookogneserc.json`];
 
   let fileCfg: FileConfig = {};
   for (const c of candidates) {
     try {
-      const text = await Deno.readTextFile(c);
+      const text = await readTextFile(c);
       fileCfg = JSON.parse(text);
       break;
     } catch {

@@ -128,13 +128,17 @@ export async function lintFile(
   return out;
 }
 
+export type ReadTextFile = (path: string) => Promise<string>;
+
 export async function lintFiles(
   filePaths: string[],
   config: EngineConfig,
+  readTextFile?: ReadTextFile,
 ): Promise<Diagnostic[]> {
+  const reader = readTextFile ?? ((p: string) => Deno.readTextFile(p));
   const results = await Promise.all(
     filePaths.map(async (p) => {
-      const src = await Deno.readTextFile(p);
+      const src = await reader(p);
       return lintFile(p, src, config);
     }),
   );
