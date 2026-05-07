@@ -54,7 +54,8 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
 
       - uses: denoland/setup-deno@v2
         with: { deno-version: v2.x }
@@ -63,7 +64,7 @@ jobs:
       - run: deno task build:npm
 
       - name: Publish to npm
-        run: npm publish --access public --provenance
+        run: npm publish
 
   publish-jsr:
     needs: [release-please, verify-versions]
