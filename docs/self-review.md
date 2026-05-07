@@ -13,12 +13,12 @@ Full sweep of all source, tests, and config before publish. Findings ranked by s
 
 ```ts
 // src/index.ts:10
-jsPlugins: ["./node_modules/@your-scope/hook-o-gnese/dist/index.js"],
+jsPlugins: ["./node_modules/hook-o-gnese/dist/index.js"],
 ```
 
 `tsdown.config.ts` only emits `format: ["esm"]`, so the file is `dist/index.mjs`. Anyone copying the `recommended` config or following the README's oxlint snippet (which has the same `.js` path) will get a **module-not-found** error.
 
-**Fix:** change to `./node_modules/@your-scope/hook-o-gnese/dist/index.mjs` in both `src/index.ts` and `README.md`.
+**Fix:** change to `./node_modules/hook-o-gnese/dist/index.mjs` in both `src/index.ts` and `README.md`.
 
 ### B2 — Severity is hard-wired to config, not tied to score tiers
 
@@ -184,7 +184,7 @@ return `${cmd} file=${d.file},line=${d.line},col=${d.column},title=${d.rule}::${
 
 If a future rule emits a message with a comma in it before the `::`, parsing breaks. Currently safe (we use `::` separator and the prefix is fixed). Pin a comment that the title comes before `::` so future-us doesn't break the contract.
 
-### P5 — SARIF formatter `informationUri` is hard-coded `github.com/your-scope/hook-o-gnese`
+### P5 — SARIF formatter `informationUri` is hard-coded `github.com/rehoutm/spaghetti-hook-o-gnese`
 
 Will be `404` until the real repo exists at the published scope. Fix at scope-rename time (see `docs/publish-plan.md` Phase A).
 

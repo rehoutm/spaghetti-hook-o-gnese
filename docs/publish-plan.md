@@ -4,7 +4,7 @@ End-to-end checklist for taking `hook-o-gnese` from `mvp-implementation` branch 
 
 **Prereqs you (the human) must do before any of this:**
 - Decide the real npm/JSR scope (replaces `@your-scope`)
-- Have a GitHub repo created (e.g. `your-scope/hook-o-gnese`)
+- Have a GitHub repo created (e.g. `rehoutm/spaghetti-hook-o-gnese`)
 - Have npm + JSR accounts with publish rights to that scope
 - Local `deno` ≥ 2, `node` ≥ 20.18, `npm` ≥ 10
 
@@ -18,9 +18,9 @@ The placeholder `@your-scope` appears in code, docs, and config. Pick the real s
 - `package.json` — `"name": "@actualscope/hook-o-gnese"`
 - `deno.json` — `"name": "@actualscope/hook-o-gnese"`
 - `src/index.ts` — `recommended.jsPlugins` path: `"./node_modules/@actualscope/hook-o-gnese/dist/index.mjs"` (also fix `.js` → `.mjs` to match the bundle)
-- `README.md` — every `@your-scope` instance + GitHub URL `your-scope/hook-o-gnese`
+- `README.md` — every `@your-scope` instance + GitHub URL `rehoutm/spaghetti-hook-o-gnese`
 - `docs/cli.md`, `docs/rule-reference.md` — `@your-scope` references
-- `.github/workflows/ci.yml` — npm smoke test uses `your-scope-hook-o-gnese-*.tgz` tarball name; the `npm pack` output is `<scope-without-@>-<name>-<version>.tgz`, so update to `actualscope-hook-o-gnese-*.tgz`
+- `.github/workflows/ci.yml` — npm smoke test uses `hook-o-gnese-*.tgz` tarball name; the `npm pack` output is `<scope-without-@>-<name>-<version>.tgz`, so update to `actualscope-hook-o-gnese-*.tgz`
 - `tests/integration/*.ts` — grep for `@your-scope`
 - Any SARIF `informationUri` in `src/formatters/sarif.ts` pointing at `github.com/your-scope/...`
 

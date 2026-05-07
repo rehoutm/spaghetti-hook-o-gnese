@@ -2,15 +2,15 @@
 
 > Score React component complexity from hook usage. Catch fat effects, scattered state, and coupled hooks before they ship.
 
-[![npm](https://img.shields.io/npm/v/@your-scope/hook-o-gnese.svg)](https://www.npmjs.com/package/@your-scope/hook-o-gnese)
-[![JSR](https://jsr.io/badges/@your-scope/hook-o-gnese)](https://jsr.io/@your-scope/hook-o-gnese)
-[![CI](https://github.com/your-scope/hook-o-gnese/actions/workflows/ci.yml/badge.svg)](https://github.com/your-scope/hook-o-gnese/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/hook-o-gnese.svg)](https://www.npmjs.com/package/hook-o-gnese)
+[![JSR](https://jsr.io/badges/@mrht/hook-o-gnese)](https://jsr.io/@mrht/hook-o-gnese)
+[![CI](https://github.com/rehoutm/spaghetti-hook-o-gnese/actions/workflows/ci.yml/badge.svg)](https://github.com/rehoutm/spaghetti-hook-o-gnese/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Most lint rules check syntax. **hook-o-gnese checks complexity.** It scores how dense your React hooks are — useEffect blocks bloated with branches and `setState` calls, components with too many `useState`s that should be a `useReducer`, effects that read and write the same state (loop bait), and custom hooks stacked too deep.
 
 ```bash
-npx @your-scope/hook-o-gnese ./src
+npx hook-o-gnese ./src
 ```
 
 ```
@@ -48,9 +48,9 @@ Full scoring formulas in [docs/thresholds.md](docs/thresholds.md). Per-rule refe
 No linter setup required. Works in any project. Outputs stylish, JSON, SARIF (for GitHub code scanning), or GitHub Actions annotations.
 
 ```bash
-npx @your-scope/hook-o-gnese ./src
-npx @your-scope/hook-o-gnese ./src --format=sarif > report.sarif
-npx @your-scope/hook-o-gnese ./src --type-aware  # enables custom-hook-depth
+npx hook-o-gnese ./src
+npx hook-o-gnese ./src --format=sarif > report.sarif
+npx hook-o-gnese ./src --type-aware  # enables custom-hook-depth
 ```
 
 Add a `.hookogneserc.json` if you want to tune thresholds:
@@ -73,13 +73,13 @@ Full CLI reference: [docs/cli.md](docs/cli.md).
 ### 2. Oxlint plugin — if you're already on oxlint
 
 ```bash
-npm install -D @your-scope/hook-o-gnese oxlint
+npm install -D hook-o-gnese oxlint
 ```
 
 ```jsonc
 // .oxlintrc.json
 {
-  "jsPlugins": ["./node_modules/@your-scope/hook-o-gnese/dist/index.mjs"],
+  "jsPlugins": ["./node_modules/hook-o-gnese/dist/index.mjs"],
   "rules": {
     "hook-o-gnese/no-fat-effects": "warn",
     "hook-o-gnese/state-scatter": "warn",
@@ -92,7 +92,7 @@ npm install -D @your-scope/hook-o-gnese oxlint
 Or import the recommended preset, which bundles tsgolint type-aware rules (`no-floating-promises`, `no-misused-promises`):
 
 ```ts
-import { recommended } from "@your-scope/hook-o-gnese";
+import { recommended } from "hook-o-gnese";
 ```
 
 ## Output formats
@@ -115,13 +115,13 @@ hook-o-gnese ./src --format=github
 
 ```yaml
 - name: Lint hook complexity
-  run: npx @your-scope/hook-o-gnese ./src --format=github
+  run: npx hook-o-gnese ./src --format=github
 ```
 
 For PR-level code-scanning UI:
 
 ```yaml
-- run: npx @your-scope/hook-o-gnese ./src --format=sarif > hook-o-gnese.sarif
+- run: npx hook-o-gnese ./src --format=sarif > hook-o-gnese.sarif
 - uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: hook-o-gnese.sarif
@@ -130,7 +130,7 @@ For PR-level code-scanning UI:
 ## Programmatic API
 
 ```ts
-import { lintFile, lintFiles } from "@your-scope/hook-o-gnese/engine";
+import { lintFile, lintFiles } from "hook-o-gnese/engine";
 
 const diagnostics = await lintFile("Component.tsx", source, {
   rules: { "hook-o-gnese/no-fat-effects": { severity: "warn" } },
@@ -156,7 +156,7 @@ Linear scan of ~200 files/sec on a single core. Rouvy companion app: 470 files i
 The CLI also ships as a single static binary built with `deno compile` — no Node, no Deno, no install required:
 
 ```bash
-git clone https://github.com/your-scope/hook-o-gnese
+git clone https://github.com/rehoutm/spaghetti-hook-o-gnese
 cd hook-o-gnese
 deno task build:bin
 ./bin/hook-o-gnese ./src

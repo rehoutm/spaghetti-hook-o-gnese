@@ -32,19 +32,19 @@ Options:
 
 ```bash
 # Lint a directory
-npx @your-scope/hook-o-gnese ./src
+npx hook-o-gnese ./src
 
 # JSON output for tooling
-npx @your-scope/hook-o-gnese ./src --format=json > report.json
+npx hook-o-gnese ./src --format=json > report.json
 
 # SARIF for GitHub code scanning
-npx @your-scope/hook-o-gnese ./src --format=sarif > report.sarif
+npx hook-o-gnese ./src --format=sarif > report.sarif
 
 # GitHub Actions annotations
-npx @your-scope/hook-o-gnese ./src --format=github
+npx hook-o-gnese ./src --format=github
 
 # Override a rule severity
-npx @your-scope/hook-o-gnese ./src --rule=hook-o-gnese/state-scatter=error
+npx hook-o-gnese ./src --rule=hook-o-gnese/state-scatter=error
 
 # Standalone binary (built via deno compile)
 ./bin/hook-o-gnese ./src --type-aware
@@ -53,7 +53,7 @@ npx @your-scope/hook-o-gnese ./src --rule=hook-o-gnese/state-scatter=error
 ## Programmatic API
 
 ```ts
-import { lintFile, lintFiles } from "@your-scope/hook-o-gnese/engine";
+import { lintFile, lintFiles } from "hook-o-gnese/engine";
 
 const diagnostics = await lintFile("Component.tsx", source, {
   rules: { "hook-o-gnese/no-fat-effects": { severity: "warn" } },

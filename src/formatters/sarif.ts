@@ -6,12 +6,12 @@ export const sarif: Formatter = ({ diagnostics }) => {
     {
       version: "2.1.0",
       $schema:
-        "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+        "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
       runs: [{
         tool: {
           driver: {
             name: "hook-o-gnese",
-            informationUri: "https://github.com/your-scope/hook-o-gnese",
+            informationUri: "https://github.com/rehoutm/spaghetti-hook-o-gnese",
             rules: ruleIds.map((id) => ({ id })),
           },
         },

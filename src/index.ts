@@ -7,7 +7,7 @@ const plugin: Plugin = eslintCompatPlugin({
 });
 
 export const recommended = {
-  jsPlugins: ["./node_modules/@your-scope/hook-o-gnese/dist/index.mjs"],
+  jsPlugins: ["./node_modules/hook-o-gnese/dist/index.mjs"],
   options: { typeAware: true, typeCheck: true },
   rules: {
     "hook-o-gnese/no-fat-effects": "warn",

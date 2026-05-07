@@ -43,8 +43,8 @@ jobs:
       - run: npm pack
       - run: |
           mkdir /tmp/smoke && cd /tmp/smoke && npm init -y
-          npm install $GITHUB_WORKSPACE/your-scope-hook-o-gnese-*.tgz typescript
-          node -e "import('@your-scope/hook-o-gnese').then(m => process.exit(Object.keys(m.default.rules).length === 4 ? 0 : 1))"
+          npm install $GITHUB_WORKSPACE/hook-o-gnese-*.tgz typescript
+          node -e "import('hook-o-gnese').then(m => process.exit(Object.keys(m.default.rules).length === 4 ? 0 : 1))"
           npx hook-o-gnese --help
           mkdir -p src && cat > src/Foo.tsx <<'EOF'
           import { useEffect, useState } from "react";

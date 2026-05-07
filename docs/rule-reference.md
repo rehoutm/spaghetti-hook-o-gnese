@@ -29,7 +29,7 @@ Reports custom hooks whose transitive call tree exceeds maxDepth. **Type-aware**
 The exported `recommended` config enables tsgolint built-ins alongside ours:
 
 ```ts
-import { recommended } from "@your-scope/hook-o-gnese";
+import { recommended } from "hook-o-gnese";
 ```
 
 Adds:

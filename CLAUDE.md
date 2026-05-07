@@ -11,7 +11,7 @@ This repo (`spaghetti-hook-o-gnese`) is the home of the `hook-o-gnese` package. 
 - Git repo is initialized (`master`) but has **no commits yet**.
 - No `package.json`, no `deno.json`, no `src/`, no tests. Don't invent build/lint/test commands — there's nothing to build until Task 1 of the plan runs.
 
-The repo folder name (`spaghetti-hook-o-gnese`) and the published package name (`hook-o-gnese`) are intentionally related but not identical — the package name is the shorter form. The package ships to JSR/npm as `@your-scope/hook-o-gnese`, the binary is `bin/hook-o-gnese`, the plugin/rule namespace is `hook-o-gnese/<rule-id>`, and the CLI's config file is `.hookogneserc.json`.
+The repo folder name (`spaghetti-hook-o-gnese`) and the published package name (`hook-o-gnese`) are intentionally related but not identical — the package name is the shorter form. The package ships to JSR/npm as `hook-o-gnese`, the binary is `bin/hook-o-gnese`, the plugin/rule namespace is `hook-o-gnese/<rule-id>`, and the CLI's config file is `.hookogneserc.json`.
 
 ## Executing the plan
 
@@ -49,5 +49,5 @@ If the user asks you to revise `hook-o-gnese-mvp-plan.md`:
 - Preserve the `- [ ]` checkbox syntax — the executing-plans / subagent-driven-development skills key off it.
 - Preserve the per-step TDD ordering (failing test → impl → passing test → commit).
 - Preserve task boundaries; each task ends with a commit. Don't merge tasks.
-- The `@your-scope` placeholder is intentional — flag it but don't replace with a guess.
 - The package name `hook-o-gnese` (binary `bin/hook-o-gnese`, rule namespace `hook-o-gnese/*`) is the **shorter form** derived from the repo folder name `spaghetti-hook-o-gnese`. Don't conflate them and don't revert to longer names.
+- npm name is unscoped (`hook-o-gnese`); JSR name is `@mrht/hook-o-gnese`. Don't reintroduce a `@your-scope` placeholder.
