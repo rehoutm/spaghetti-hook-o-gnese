@@ -1,4 +1,5 @@
 // tests/fixtures/deep-custom-hook.tsx
+import * as React from "react";
 import { useFetchAndPoll } from "./deep-custom-hook-impl.ts";
 
 export function Widget({ id }: { id: string }) {

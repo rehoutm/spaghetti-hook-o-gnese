@@ -47,7 +47,11 @@ export class TsProgramCache {
   ): ts.Declaration | null {
     const program = this.getProgram();
     const checker = program.getTypeChecker();
-    const sourceFile = program.getSourceFile(filePath);
+    const absolute = filePath.startsWith("/")
+      ? filePath
+      : `${this.rootDir.replace(/\/$/, "")}/${filePath}`;
+    const sourceFile = program.getSourceFile(absolute) ??
+      program.getSourceFile(filePath);
     if (!sourceFile) return null;
 
     let target: ts.Node | null = null;
