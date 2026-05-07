@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.6](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.5...v0.0.6) (2026-05-07)
+
+
+### Bug Fixes
+
+* bump Node to 24 for npm trusted-publisher OIDC auth ([3bad3ec](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/3bad3ece0d6570a6f1250e2b979e1b7f44b6681e))
+* drop setup-node registry-url to unblock OIDC trusted publishing ([6a77596](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/6a77596a666f3c67e5c4735a5a8c400636f72cad))
+* fix npm publish by proper node version ([68306cd](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/68306cd701baa49f0e8d0a7a8b3bbce32f3b9a4e))
+* fix npm publish by proper node version ([8f4b8a0](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/8f4b8a01a9a83356577a110afbf4be7e7275cd58))
+
 ## [0.0.5](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.4...v0.0.5) (2026-05-07)
 
 
