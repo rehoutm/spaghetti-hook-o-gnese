@@ -33,7 +33,15 @@ jobs:
         with: { deno-version: v2.x }
       - run: deno task build:bin
       - run: ./bin/hook-o-gnese --help
-      - run: ./bin/hook-o-gnese tests/fixtures/fat-effect.tsx --format=json
+      - shell: bash
+        run: |
+          set +e
+          out=$(./bin/hook-o-gnese tests/fixtures/fat-effect.tsx --format=json)
+          code=$?
+          echo "$out"
+          # exit 1 means findings present (expected on this fixture); exit 0 = clean; >=2 = real error
+          [ $code -le 1 ] || { echo "binary errored with exit $code"; exit 1; }
+          echo "$out" | grep -q '"no-fat-effects"' || { echo "expected no-fat-effects diagnostic"; exit 1; }
 
   smoke-npm:
     runs-on: ubuntu-latest
