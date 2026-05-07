@@ -1,6 +1,6 @@
 {
   "name": "@mrht/hook-o-gnese",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "nodeModulesDir": "auto",
   "exports": {
     ".": "./src/index.ts",
@@ -33,7 +33,13 @@
     "dogfood:plugin": "deno run -A npm:oxlint tests/fixtures/",
     "dogfood:cli": "deno run -A src/cli.ts tests/fixtures/"
   },
-  "fmt": { "exclude": ["dist/", "bin/", "node_modules/"] },
+  "fmt": {
+    "exclude": [
+      "dist/",
+      "bin/",
+      "node_modules/"
+    ]
+  },
   "exclude": [
     "dist/",
     "bin/",
@@ -42,7 +48,12 @@
     "tests/fixtures/"
   ],
   "publish": {
-    "include": ["src/", "deno.json", "README.md", "LICENSE"],
+    "include": [
+      "src/",
+      "deno.json",
+      "README.md",
+      "LICENSE"
+    ],
     "exclude": [
       "tests/",
       "scripts/",
