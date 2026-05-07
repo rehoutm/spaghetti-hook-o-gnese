@@ -37,7 +37,8 @@
     "exclude": [
       "dist/",
       "bin/",
-      "node_modules/"
+      "node_modules/",
+      "**/*.md"
     ]
   },
   "exclude": [
