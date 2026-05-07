@@ -68,16 +68,17 @@ export async function runCli(opts: CliOptions, io: RuntimeIO): Promise<number> {
     opts.config,
     io.readTextFile,
   );
-  if (opts.typeAware) {
-    if (isTypescriptAvailable(opts.cwd)) {
-      engine.typeAware = true;
-    } else {
-      io.writeStderr(
-        "warning: --type-aware was requested but the 'typescript' package " +
-          "is not installed. Skipping type-aware rules. " +
-          "Install with: npm i -D typescript@>=6\n",
-      );
-    }
+  // CLI flag --type-aware force-enables; config-file `typeAware: true` is
+  // honored as-is. Either way, downgrade to false if `typescript` cannot be
+  // loaded, so the rule never explodes at create() time.
+  if (opts.typeAware) engine.typeAware = true;
+  if (engine.typeAware && !isTypescriptAvailable(opts.cwd)) {
+    io.writeStderr(
+      "warning: type-aware rules require the 'typescript' package to be " +
+        "installed in your project. Skipping type-aware rules. " +
+        "Install with: npm i -D typescript@>=6\n",
+    );
+    engine.typeAware = false;
   }
   const finalEngine = applyCliRuleOverrides(engine, opts.ruleOverrides);
 

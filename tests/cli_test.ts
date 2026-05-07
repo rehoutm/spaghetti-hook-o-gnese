@@ -3,7 +3,9 @@ import { assert, assertEquals } from "@std/assert";
 
 async function runCli(
   args: string[],
+  options: { cwd?: string } = {},
 ): Promise<{ stdout: string; stderr: string; code: number }> {
+  const repoRoot = new URL("..", import.meta.url).pathname;
   const cmd = new Deno.Command("deno", {
     args: [
       "run",
@@ -12,11 +14,12 @@ async function runCli(
       "--allow-run",
       "--allow-sys",
       "--allow-ffi",
-      "src/cli.ts",
+      `${repoRoot}src/cli.ts`,
       ...args,
     ],
     stdout: "piped",
     stderr: "piped",
+    cwd: options.cwd,
   });
   const out = await cmd.output();
   return {
@@ -107,4 +110,34 @@ Deno.test("cli: --type-aware enables custom-hook-depth", async () => {
       d.rule === "hook-o-gnese/custom-hook-depth"
     ),
   );
+});
+
+// Regression: when typeAware is enabled (CLI flag OR config) but `typescript`
+// is not resolvable from cwd, the CLI must downgrade gracefully with a warning
+// instead of crashing inside the rule's create(). The compiled binary scenario
+// hits this even when TS is installed in a sibling repo, because deno-compiled
+// binaries can't resolve dynamically-required npm packages.
+Deno.test("cli: typeAware downgrades to warning when typescript unavailable", async () => {
+  const tmp = await Deno.makeTempDir({ prefix: "hookogn_no_ts_" });
+  try {
+    await Deno.writeTextFile(
+      `${tmp}/fixture.tsx`,
+      'import { useState } from "react";\nexport function F() { const [a] = useState(0); return a; }\n',
+    );
+    await Deno.writeTextFile(
+      `${tmp}/.hookogneserc.json`,
+      JSON.stringify({ typeAware: true }),
+    );
+    const { stderr, code } = await runCli(
+      ["fixture.tsx", "--format=json"],
+      { cwd: tmp },
+    );
+    assert(
+      stderr.includes("type-aware rules require"),
+      `expected TS-missing warning on stderr, got: ${stderr}`,
+    );
+    assert(code <= 1, `expected exit ≤ 1, got ${code}`);
+  } finally {
+    await Deno.remove(tmp, { recursive: true });
+  }
 });
