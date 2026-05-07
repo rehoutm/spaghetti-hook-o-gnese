@@ -7,6 +7,14 @@ import { parseSync } from "oxc-parser";
 import { walk as fsWalk } from "@std/fs";
 import { relative } from "@std/path";
 import { noFatEffects } from "../src/rules/no-fat-effects.ts";
+import { stateScatter } from "../src/rules/state-scatter.ts";
+import { hookCoupling } from "../src/rules/hook-coupling.ts";
+
+const RULES = [
+  { id: "hook-o-gnese/no-fat-effects", rule: noFatEffects },
+  { id: "hook-o-gnese/state-scatter", rule: stateScatter },
+  { id: "hook-o-gnese/hook-coupling", rule: hookCoupling },
+];
 
 interface Diag {
   file: string;
@@ -56,40 +64,42 @@ for await (const entry of fsWalk(root, { includeDirs: false, skip: [/node_module
     continue;
   }
 
-  const fileDiags: { message: string; node: any }[] = [];
-  const context = {
-    options: [],
-    filename: entry.path,
-    cwd,
-    report: (d: { message: string; node: any }) => fileDiags.push(d),
-  };
-  const handlers = noFatEffects.create(context);
+  for (const { id, rule } of RULES) {
+    const fileDiags: { message: string; node: any }[] = [];
+    const context = {
+      options: [],
+      filename: entry.path,
+      cwd,
+      report: (d: { message: string; node: any }) => fileDiags.push(d),
+    };
+    const handlers: Record<string, (n: any) => void> = (rule as any).create(context);
 
-  function visit(n: any) {
-    if (!n || typeof n !== "object") return;
-    const enter = handlers[n.type];
-    if (enter) enter(n);
-    for (const k in n) {
-      const v = n[k];
-      if (Array.isArray(v)) v.forEach(visit);
-      else if (v && typeof v === "object") visit(v);
+    function visit(n: any) {
+      if (!n || typeof n !== "object") return;
+      const enter = handlers[n.type];
+      if (enter) enter(n);
+      for (const k in n) {
+        const v = n[k];
+        if (Array.isArray(v)) v.forEach(visit);
+        else if (v && typeof v === "object") visit(v);
+      }
     }
-  }
-  visit(program);
+    visit(program);
 
-  for (const d of fileDiags) {
-    const start = d.node.start ?? 0;
-    let line = 1, column = 1;
-    for (let i = 0; i < start && i < source.length; i++) {
-      if (source[i] === "\n") { line++; column = 1; } else { column++; }
+    for (const d of fileDiags) {
+      const start = d.node.start ?? 0;
+      let line = 1, column = 1;
+      for (let i = 0; i < start && i < source.length; i++) {
+        if (source[i] === "\n") { line++; column = 1; } else { column++; }
+      }
+      diagnostics.push({
+        file: relative(cwd, entry.path),
+        line,
+        column,
+        message: d.message,
+        rule: id,
+      });
     }
-    diagnostics.push({
-      file: relative(cwd, entry.path),
-      line,
-      column,
-      message: d.message,
-      rule: "hook-o-gnese/no-fat-effects",
-    });
   }
 }
 
