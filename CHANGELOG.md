@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.3...v0.0.4) (2026-05-07)
+
+
+### Bug Fixes
+
+* consolidate publish jobs into release-please workflow ([#8](https://github.com/rehoutm/spaghetti-hook-o-gnese/issues/8)) ([0f2df80](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/0f2df8059205973e0b224bc3a5a8ae29f872b016))
+
 ## [0.0.3](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.2...v0.0.3) (2026-05-07)
 
 
