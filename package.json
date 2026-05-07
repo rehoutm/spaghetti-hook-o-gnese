@@ -1,0 +1,69 @@
+{
+  "name": "hook-o-gnese",
+  "version": "0.0.1",
+  "description": "Score React hook complexity. Runs as oxlint plugin or standalone CLI.",
+  "type": "module",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "bin": {
+    "hook-o-gnese": "dist/cli.mjs"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
+    },
+    "./engine": {
+      "import": "./dist/engine.mjs",
+      "types": "./dist/engine.d.mts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "oxlint",
+    "oxlint-plugin",
+    "react",
+    "hooks",
+    "complexity",
+    "lint",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "Michal Rehout",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rehoutm/spaghetti-hook-o-gnese.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rehoutm/spaghetti-hook-o-gnese/issues"
+  },
+  "homepage": "https://github.com/rehoutm/spaghetti-hook-o-gnese#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.63.0",
+    "typescript": ">=6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "oxlint": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "globby": "^16.2.0",
+    "oxc-parser": "^0.129.0"
+  },
+  "devDependencies": {
+    "tsdown": "^0.21.10",
+    "typescript": "^6.0.3",
+    "@oxlint/plugins": "^1.63.0"
+  },
+  "engines": {
+    "node": ">=20.18.0"
+  }
+}

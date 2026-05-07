@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "preserve",
+    "allowJs": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src/**/*", "tests/**/*", "scripts/**/*"]
+}

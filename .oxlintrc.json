@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["./src/index.ts"],
+  "rules": {
+    "hook-o-gnese/no-fat-effects": "warn",
+    "hook-o-gnese/state-scatter": "warn",
+    "hook-o-gnese/hook-coupling": "error",
+    "hook-o-gnese/custom-hook-depth": "warn"
+  },
+  "ignorePatterns": ["dist/", "bin/", "node_modules/"]
+}

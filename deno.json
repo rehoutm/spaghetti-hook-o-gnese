@@ -1,0 +1,54 @@
+{
+  "name": "@mrht/hook-o-gnese",
+  "version": "0.0.1",
+  "nodeModulesDir": "auto",
+  "exports": {
+    ".": "./src/index.ts",
+    "./cli": "./src/cli.ts",
+    "./engine": "./src/engine.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.19",
+    "@std/path": "jsr:@std/path@^1.1.4",
+    "@std/cli": "jsr:@std/cli@^1.0.29",
+    "@std/fs": "jsr:@std/fs@^1.0.23",
+    "oxc-parser": "npm:oxc-parser@^0.129.0",
+    "@oxlint/plugins": "npm:@oxlint/plugins@^1.63.0",
+    "typescript": "npm:typescript@^6.0.3",
+    "globby": "npm:globby@^16.2.0",
+    "oxlint": "npm:oxlint@^1.63.0",
+    "tsdown": "npm:tsdown@^0.21.10",
+    "rollup-plugin-license": "npm:rollup-plugin-license@^3.7.1"
+  },
+  "tasks": {
+    "check": "deno check",
+    "test": "deno test --allow-read --allow-env --allow-run --allow-write --allow-ffi --allow-sys --allow-net",
+    "test:integration": "deno test --allow-all tests/integration/",
+    "lint": "deno run -A npm:oxlint .",
+    "fmt": "deno fmt",
+    "cli": "deno run --allow-read --allow-env --allow-sys --allow-ffi --allow-run src/cli.ts",
+    "build:npm": "deno run -A npm:tsdown",
+    "build:bin": "deno compile --allow-read --allow-env --allow-sys --allow-ffi --output=bin/hook-o-gnese src/cli.ts",
+    "publish:jsr": "deno publish",
+    "dogfood:plugin": "deno run -A npm:oxlint tests/fixtures/",
+    "dogfood:cli": "deno run -A src/cli.ts tests/fixtures/"
+  },
+  "fmt": { "exclude": ["dist/", "bin/", "node_modules/"] },
+  "exclude": [
+    "dist/",
+    "bin/",
+    "node_modules/",
+    "*.tsbuildinfo",
+    "tests/fixtures/"
+  ],
+  "publish": {
+    "include": ["src/", "deno.json", "README.md", "LICENSE"],
+    "exclude": [
+      "tests/",
+      "scripts/",
+      "tsdown.config.ts",
+      "tsconfig.json",
+      "*.test.ts"
+    ]
+  }
+}

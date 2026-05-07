@@ -1,0 +1,70 @@
+name: CI
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - run: deno fmt --check
+      - run: deno install
+      - run: deno task check
+      - run: deno task test
+      - run: deno run -A npm:tsdown
+      - run: deno publish --dry-run
+
+  smoke-cli-binary:
+    runs-on: ${{ matrix.os }}
+    needs: test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - run: deno task build:bin
+      - run: ./bin/hook-o-gnese --help
+      - shell: bash
+        run: |
+          set +e
+          out=$(./bin/hook-o-gnese tests/fixtures/fat-effect.tsx --format=json)
+          code=$?
+          echo "$out"
+          # exit 1 means findings present (expected on this fixture); exit 0 = clean; >=2 = real error
+          [ $code -le 1 ] || { echo "binary errored with exit $code"; exit 1; }
+          echo "$out" | grep -q 'no-fat-effects' || { echo "expected no-fat-effects diagnostic"; exit 1; }
+
+  smoke-npm:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - run: deno run -A npm:tsdown
+      - run: npm pack
+      - run: |
+          mkdir /tmp/smoke && cd /tmp/smoke && npm init -y
+          npm install $GITHUB_WORKSPACE/hook-o-gnese-*.tgz typescript
+          node -e "import('hook-o-gnese').then(m => process.exit(Object.keys(m.default.rules).length === 4 ? 0 : 1))"
+          npx hook-o-gnese --help
+          mkdir -p src && cat > src/Foo.tsx <<'EOF'
+          import { useEffect, useState } from "react";
+          export function Foo() {
+            const [a] = useState(0);
+            useEffect(() => { if (a) console.log(1); }, [a]);
+            return null;
+          }
+          EOF
+          npx hook-o-gnese ./src --format=json | head -c 200
