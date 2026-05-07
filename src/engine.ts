@@ -1,27 +1,53 @@
+/**
+ * Standalone linting engine for `hook-o-gnese`.
+ *
+ * Provides a runtime-agnostic pipeline that parses files with `oxc-parser`,
+ * runs the package's rules against the resulting AST, and returns
+ * {@link Diagnostic} records. Used directly by the CLI and embeddable in any
+ * host that can supply a file reader.
+ *
+ * @module
+ */
+
 import { parseSync } from "oxc-parser";
 import { ALL_RULES } from "./rules/registry.ts";
 
+/** Rule severity. `"off"` disables a rule entirely. */
 export type Severity = "off" | "warn" | "error";
 
+/** A single lint finding produced by the engine. */
 export interface Diagnostic {
+  /** Absolute or workspace-relative path of the linted file. */
   file: string;
+  /** Fully qualified rule id (e.g. `"hook-o-gnese/no-fat-effects"`). */
   rule: string;
+  /** Effective severity after rule and config resolution. */
   severity: Exclude<Severity, "off">;
+  /** Human-readable description of the problem. */
   message: string;
+  /** 1-based line where the diagnostic starts. */
   line: number;
+  /** 1-based column where the diagnostic starts. */
   column: number;
+  /** 1-based line where the diagnostic ends, when known. */
   endLine?: number;
+  /** 1-based column where the diagnostic ends, when known. */
   endColumn?: number;
 }
 
+/** Per-rule configuration: severity plus optional rule-specific options. */
 export interface RuleConfig {
   severity: Severity;
   options?: unknown;
 }
 
+/** Configuration consumed by {@link lintFile} and {@link lintFiles}. */
 export interface EngineConfig {
+  /** Map of rule id to its configuration. */
   rules: Record<string, RuleConfig>;
+  /** Working directory used to resolve TypeScript projects and relative paths. */
   cwd: string;
+  /** When true, type-aware rules (e.g. `custom-hook-depth`) are run. */
   typeAware: boolean;
 }
 
@@ -90,6 +116,16 @@ function walkAST(node: any, handlers: Record<string, any>) {
   if (exit) exit(node);
 }
 
+/**
+ * Lint a single source file and return any diagnostics produced.
+ *
+ * Parses `source` with `oxc-parser`, bails out early on non-React files, and
+ * dispatches every enabled rule in `config` against the resulting AST.
+ *
+ * @param filePath Path used for diagnostic reporting and to infer the parser language.
+ * @param source The source code to lint.
+ * @param config Resolved engine configuration.
+ */
 export async function lintFile(
   filePath: string,
   source: string,
@@ -173,8 +209,16 @@ export async function lintFile(
   return out;
 }
 
+/** Reads a file's contents as text. Injected so the engine stays runtime-agnostic. */
 export type ReadTextFile = (path: string) => Promise<string>;
 
+/**
+ * Lint a batch of files in parallel and return their combined diagnostics.
+ *
+ * @param filePaths Paths to lint.
+ * @param config Resolved engine configuration shared across files.
+ * @param readTextFile File reader supplied by the host (Deno, Node, in-memory).
+ */
 export async function lintFiles(
   filePaths: string[],
   config: EngineConfig,
