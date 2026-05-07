@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.7](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.6...v0.0.7) (2026-05-07)
+
+
+### Bug Fixes
+
+* fix errors without ts installed and improved type-aware ux ([#14](https://github.com/rehoutm/spaghetti-hook-o-gnese/issues/14)) ([032dca2](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/032dca2f2f213b0415129421b7ff23fb103e4c5a))
+
 ## [0.0.6](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.5...v0.0.6) (2026-05-07)
 
 
