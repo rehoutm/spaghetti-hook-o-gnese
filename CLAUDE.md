@@ -64,8 +64,14 @@ Versioning is automated by **release-please**
 2. The bot opens/updates a "chore: release X.Y.Z" PR that bumps `package.json` +
    `deno.json` in lockstep and updates `CHANGELOG.md`.
 3. Merging the release PR tags `vX.Y.Z` and creates a GitHub Release.
-4. `release.yml` fires on `release: published` → publishes to npm and JSR in
-   parallel via OIDC trusted publishing. No tokens.
+4. The same `release-please.yml` workflow then runs `verify-versions`,
+   `publish-npm`, and `publish-jsr` jobs (gated on the action's
+   `release_created` output) in parallel via OIDC trusted publishing. No tokens.
+
+Publish jobs live in the release-please workflow on purpose: events created by
+`GITHUB_TOKEN` (like the GitHub Release release-please publishes) do **not**
+trigger downstream workflows, so a separate `on: release: published` listener
+would silently never fire.
 
 Pre-1.0 bump rules (set in `release-please-config.json`): breaking changes are
 minor bumps, features are patch bumps, fixes are patch bumps. Do not hand-bump
