@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.5](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.4...v0.0.5) (2026-05-07)
+
+
+### Bug Fixes
+
+* add explicit MIT license field to deno.json ([696b1fa](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/696b1faa2f66d77bf3f8378f12b50571a2bce6dd))
+* restore full MIT license text in LICENSE file ([223d281](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/223d2810655f67bc8abada2bb4cde142b6c9dfc1))
+
 ## [0.0.4](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.3...v0.0.4) (2026-05-07)
 
 
