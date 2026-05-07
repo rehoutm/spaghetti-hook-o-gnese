@@ -1,0 +1,7 @@
+node_modules/
+dist/
+bin/
+*.tsbuildinfo
+.DS_Store
+deno.lock
+*.tgz
