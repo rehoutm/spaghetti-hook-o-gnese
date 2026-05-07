@@ -2,6 +2,7 @@ import { globby } from "globby";
 import { lintFiles } from "./engine.ts";
 import type { Severity } from "./engine.ts";
 import { applyCliRuleOverrides, DEFAULT_IGNORE, loadConfig } from "./config.ts";
+import { isTypescriptAvailable } from "./ts-program.ts";
 import { stylish } from "./formatters/stylish.ts";
 import { json as jsonFmt } from "./formatters/json.ts";
 import { sarif } from "./formatters/sarif.ts";
@@ -24,7 +25,8 @@ Usage:
 Options:
   --format=<fmt>          stylish (default) | json | sarif | github
   --config=<path>         path to .hookogneserc.json
-  --type-aware            enable custom-hook-depth (slower, uses TS Compiler API)
+  --type-aware            enable custom-hook-depth (slower, uses TS Compiler API).
+                          Requires 'typescript' installed in your project.
   --rule=<id>=<sev>       override rule severity (off|warn|error). Repeatable.
   --help, -h              show this message
 
@@ -66,7 +68,17 @@ export async function runCli(opts: CliOptions, io: RuntimeIO): Promise<number> {
     opts.config,
     io.readTextFile,
   );
-  if (opts.typeAware) engine.typeAware = true;
+  if (opts.typeAware) {
+    if (isTypescriptAvailable(opts.cwd)) {
+      engine.typeAware = true;
+    } else {
+      io.writeStderr(
+        "warning: --type-aware was requested but the 'typescript' package " +
+          "is not installed. Skipping type-aware rules. " +
+          "Install with: npm i -D typescript@>=6\n",
+      );
+    }
+  }
   const finalEngine = applyCliRuleOverrides(engine, opts.ruleOverrides);
 
   const files = await globby(opts.paths, {

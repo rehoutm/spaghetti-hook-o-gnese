@@ -52,6 +52,9 @@
   "peerDependenciesMeta": {
     "oxlint": {
       "optional": true
+    },
+    "typescript": {
+      "optional": true
     }
   },
   "dependencies": {

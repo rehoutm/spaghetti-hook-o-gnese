@@ -1,15 +1,59 @@
-import ts from "typescript";
+import { createRequire } from "node:module";
+import { join as joinPath } from "node:path";
+import type ts from "typescript";
+
+type TS = typeof ts;
+
+// Per-cwd cache: different consumers may resolve to different `typescript`
+// installs, so the cache key must include cwd.
+const tsCache = new Map<string, TS>();
+
+// Resolve from a fictitious file inside the consumer's CWD so Node walks UP
+// their project tree (finding their installed `typescript`), not ours. This
+// matters for `npx`, where the package lives in npm's npx cache.
+function requireFromCwd(cwd: string) {
+  return createRequire(joinPath(cwd, "_"));
+}
+
+function loadTs(cwd: string): TS {
+  const cached = tsCache.get(cwd);
+  if (cached) return cached;
+  try {
+    const mod = requireFromCwd(cwd)("typescript") as TS | { default: TS };
+    const lib = ((mod as { default?: TS }).default ?? mod) as TS;
+    tsCache.set(cwd, lib);
+    return lib;
+  } catch (err) {
+    throw new Error(
+      "hook-o-gnese: --type-aware requires the 'typescript' package to be " +
+        "installed in your project. Install it with: npm i -D typescript@>=6",
+      { cause: err as Error },
+    );
+  }
+}
+
+export function isTypescriptAvailable(cwd: string): boolean {
+  try {
+    loadTs(cwd);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export class TsProgramCache {
   private program: ts.Program | null = null;
   private rootDir: string;
+  private ts: TS;
 
   constructor(rootDir: string) {
     this.rootDir = rootDir;
+    this.ts = loadTs(rootDir);
   }
 
   private getProgram(): ts.Program {
     if (this.program) return this.program;
+    const ts = this.ts;
     const configPath = ts.findConfigFile(
       this.rootDir,
       ts.sys.fileExists,
@@ -45,6 +89,7 @@ export class TsProgramCache {
     filePath: string,
     identifier: string,
   ): ts.Declaration | null {
+    const ts = this.ts;
     const program = this.getProgram();
     const checker = program.getTypeChecker();
     const absolute = filePath.startsWith("/")
@@ -81,6 +126,7 @@ export class TsProgramCache {
   ): number {
     if (depth > 10 || seen.has(decl)) return depth;
     seen.add(decl);
+    const ts = this.ts;
     const program = this.getProgram();
     const checker = program.getTypeChecker();
     let maxDepth = depth;

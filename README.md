@@ -62,7 +62,7 @@ No linter setup required. Works in any project. Outputs stylish, JSON, SARIF
 ```bash
 npx hook-o-gnese ./src
 npx hook-o-gnese ./src --format=sarif > report.sarif
-npx hook-o-gnese ./src --type-aware  # enables custom-hook-depth
+npx hook-o-gnese ./src --type-aware  # enables custom-hook-depth (needs `typescript` in your project)
 ```
 
 Add a `.hookogneserc.json` if you want to tune thresholds:
