@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.8](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.7...v0.0.8) (2026-05-07)
+
+
+### Bug Fixes
+
+* downgrade typeAware gracefully when typescript unavailable ([#18](https://github.com/rehoutm/spaghetti-hook-o-gnese/issues/18)) ([f325a55](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/f325a555727914953c2e562f9f85f73eea80fec1))
+* improve jsr score by including module and symbol jsdocs ([#16](https://github.com/rehoutm/spaghetti-hook-o-gnese/issues/16)) ([dd8d821](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/dd8d82137b4ecfd4c1728ac9e00adc7958ee75ad))
+
 ## [0.0.7](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.6...v0.0.7) (2026-05-07)
 
 
