@@ -1,11 +1,15 @@
 import type { EngineConfig, Severity } from "./engine.ts";
 
-const DEFAULT_RULES: Record<string, { severity: Severity; options?: unknown }> = {
-  "hook-o-gnese/no-fat-effects": { severity: "warn" },
-  "hook-o-gnese/state-scatter": { severity: "warn" },
-  "hook-o-gnese/hook-coupling": { severity: "error" },
-  "hook-o-gnese/custom-hook-depth": { severity: "warn", options: { maxDepth: 3 } },
-};
+const DEFAULT_RULES: Record<string, { severity: Severity; options?: unknown }> =
+  {
+    "hook-o-gnese/no-fat-effects": { severity: "warn" },
+    "hook-o-gnese/state-scatter": { severity: "warn" },
+    "hook-o-gnese/hook-coupling": { severity: "error" },
+    "hook-o-gnese/custom-hook-depth": {
+      severity: "warn",
+      options: { maxDepth: 3 },
+    },
+  };
 
 export const DEFAULT_IGNORE = [
   "**/node_modules/**",
@@ -70,7 +74,10 @@ export function applyCliRuleOverrides(
 ): EngineConfig {
   const rules = { ...cfg.rules };
   for (const o of overrides) {
-    rules[o.id] = { ...(rules[o.id] ?? { severity: "off" }), severity: o.severity };
+    rules[o.id] = {
+      ...(rules[o.id] ?? { severity: "off" }),
+      severity: o.severity,
+    };
   }
   return { ...cfg, rules };
 }

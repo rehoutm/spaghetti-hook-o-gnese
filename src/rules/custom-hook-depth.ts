@@ -3,13 +3,27 @@ import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
 import { getHookName } from "../ast-helpers.ts";
 import type { RuleContext } from "./no-fat-effects.ts";
 
-interface Options { maxDepth?: number; errorMaxDepth?: number }
+interface Options {
+  maxDepth?: number;
+  errorMaxDepth?: number;
+}
 
 const REACT_HOOKS = new Set([
-  "useState", "useEffect", "useLayoutEffect", "useMemo", "useCallback",
-  "useReducer", "useContext", "useRef", "useImperativeHandle",
-  "useDebugValue", "useId", "useTransition", "useDeferredValue",
-  "useSyncExternalStore", "useInsertionEffect",
+  "useState",
+  "useEffect",
+  "useLayoutEffect",
+  "useMemo",
+  "useCallback",
+  "useReducer",
+  "useContext",
+  "useRef",
+  "useImperativeHandle",
+  "useDebugValue",
+  "useId",
+  "useTransition",
+  "useDeferredValue",
+  "useSyncExternalStore",
+  "useInsertionEffect",
 ]);
 
 let sharedCache: TsProgramCache | null = null;
@@ -27,7 +41,10 @@ export const customHookDepth = {
     const maxDepth = opts.maxDepth ?? DEFAULT_THRESHOLDS.customHookDepth.warn;
     const errorMaxDepth = opts.errorMaxDepth ??
       DEFAULT_THRESHOLDS.customHookDepth.error;
-    const g = globalThis as { Deno?: { cwd(): string }; process?: { cwd(): string } };
+    const g = globalThis as {
+      Deno?: { cwd(): string };
+      process?: { cwd(): string };
+    };
     const cwd = context.cwd ?? g.process?.cwd() ?? g.Deno?.cwd() ?? ".";
     sharedCache ??= new TsProgramCache(cwd);
     const cache = sharedCache;

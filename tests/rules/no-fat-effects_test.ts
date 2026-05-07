@@ -3,9 +3,16 @@ import { assert, assertEquals } from "@std/assert";
 import { parseSync } from "oxc-parser";
 import { noFatEffects } from "../../src/rules/no-fat-effects.ts";
 
-interface Diag { message: string; node: any }
+interface Diag {
+  message: string;
+  node: any;
+}
 
-export function runRule(rule: any, code: string, options: unknown[] = []): Diag[] {
+export function runRule(
+  rule: any,
+  code: string,
+  options: unknown[] = [],
+): Diag[] {
   const diags: Diag[] = [];
   const context = {
     options,

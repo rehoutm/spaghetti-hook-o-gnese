@@ -34,9 +34,21 @@
     "dogfood:cli": "deno run -A src/cli.ts tests/fixtures/"
   },
   "fmt": { "exclude": ["dist/", "bin/", "node_modules/"] },
-  "exclude": ["dist/", "bin/", "node_modules/", "*.tsbuildinfo", "tests/fixtures/"],
+  "exclude": [
+    "dist/",
+    "bin/",
+    "node_modules/",
+    "*.tsbuildinfo",
+    "tests/fixtures/"
+  ],
   "publish": {
     "include": ["src/", "deno.json", "README.md", "LICENSE"],
-    "exclude": ["tests/", "scripts/", "tsdown.config.ts", "tsconfig.json", "*.test.ts"]
+    "exclude": [
+      "tests/",
+      "scripts/",
+      "tsdown.config.ts",
+      "tsconfig.json",
+      "*.test.ts"
+    ]
   }
 }

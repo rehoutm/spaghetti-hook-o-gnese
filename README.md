@@ -1,13 +1,18 @@
 # hook-o-gnese
 
-> Score React component complexity from hook usage. Catch fat effects, scattered state, and coupled hooks before they ship.
+> Score React component complexity from hook usage. Catch fat effects, scattered
+> state, and coupled hooks before they ship.
 
 [![npm](https://img.shields.io/npm/v/hook-o-gnese.svg)](https://www.npmjs.com/package/hook-o-gnese)
 [![JSR](https://jsr.io/badges/@mrht/hook-o-gnese)](https://jsr.io/@mrht/hook-o-gnese)
 [![CI](https://github.com/rehoutm/spaghetti-hook-o-gnese/actions/workflows/ci.yml/badge.svg)](https://github.com/rehoutm/spaghetti-hook-o-gnese/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Most lint rules check syntax. **hook-o-gnese checks complexity.** It scores how dense your React hooks are — useEffect blocks bloated with branches and `setState` calls, components with too many `useState`s that should be a `useReducer`, effects that read and write the same state (loop bait), and custom hooks stacked too deep.
+Most lint rules check syntax. **hook-o-gnese checks complexity.** It scores how
+dense your React hooks are — useEffect blocks bloated with branches and
+`setState` calls, components with too many `useState`s that should be a
+`useReducer`, effects that read and write the same state (loop bait), and custom
+hooks stacked too deep.
 
 ```bash
 npx hook-o-gnese ./src
@@ -26,26 +31,33 @@ src/screens/Settings.tsx
 
 ## Why
 
-You've seen the file. 800 lines of component, fifteen `useState` calls, a `useEffect` whose dependency array reads like a phone book, and a comment that says `// TODO: refactor`. By the time anyone notices, it's already in production and nobody wants to touch it.
+You've seen the file. 800 lines of component, fifteen `useState` calls, a
+`useEffect` whose dependency array reads like a phone book, and a comment that
+says `// TODO: refactor`. By the time anyone notices, it's already in production
+and nobody wants to touch it.
 
-`hook-o-gnese` is your early warning system. It measures the smells objectively, surfaces them in CI, and gives you concrete numbers to argue with in code review.
+`hook-o-gnese` is your early warning system. It measures the smells objectively,
+surfaces them in CI, and gives you concrete numbers to argue with in code
+review.
 
 ## What it catches
 
-| Rule | Smell | Default |
-|---|---|---|
-| `no-fat-effects` | useEffect blocks dense with branches, setState calls, missing cleanup | warn at score ≥ 10 |
-| `state-scatter` | Components with too many `useState` calls (probably want `useReducer`) | warn at score ≥ 5 |
-| `hook-coupling` | useEffect that reads state it also writes (re-render loop bait) | error |
-| `custom-hook-depth` | Custom hooks calling custom hooks calling custom hooks (type-aware) | warn at depth ≥ 3 |
+| Rule                | Smell                                                                  | Default            |
+| ------------------- | ---------------------------------------------------------------------- | ------------------ |
+| `no-fat-effects`    | useEffect blocks dense with branches, setState calls, missing cleanup  | warn at score ≥ 10 |
+| `state-scatter`     | Components with too many `useState` calls (probably want `useReducer`) | warn at score ≥ 5  |
+| `hook-coupling`     | useEffect that reads state it also writes (re-render loop bait)        | error              |
+| `custom-hook-depth` | Custom hooks calling custom hooks calling custom hooks (type-aware)    | warn at depth ≥ 3  |
 
-Full scoring formulas in [docs/thresholds.md](docs/thresholds.md). Per-rule reference in [docs/rule-reference.md](docs/rule-reference.md).
+Full scoring formulas in [docs/thresholds.md](docs/thresholds.md). Per-rule
+reference in [docs/rule-reference.md](docs/rule-reference.md).
 
 ## Two ways to run
 
 ### 1. Standalone CLI — recommended for most
 
-No linter setup required. Works in any project. Outputs stylish, JSON, SARIF (for GitHub code scanning), or GitHub Actions annotations.
+No linter setup required. Works in any project. Outputs stylish, JSON, SARIF
+(for GitHub code scanning), or GitHub Actions annotations.
 
 ```bash
 npx hook-o-gnese ./src
@@ -89,7 +101,8 @@ npm install -D hook-o-gnese oxlint
 }
 ```
 
-Or import the recommended preset, which bundles tsgolint type-aware rules (`no-floating-promises`, `no-misused-promises`):
+Or import the recommended preset, which bundles tsgolint type-aware rules
+(`no-floating-promises`, `no-misused-promises`):
 
 ```ts
 import { recommended } from "hook-o-gnese";
@@ -143,17 +156,19 @@ const diagnostics = await lintFile("Component.tsx", source, {
 
 Sequential per-file scan, but each file is cheap:
 
-| Path | Cold start | Per-file warm |
-|---|---|---|
-| Node CLI (`npx`) | ~80ms | ~3–5ms |
-| Standalone binary (`deno compile`) | ~30ms | ~3–5ms |
-| Type-aware rule (first run) | +50–150ms | TS Program load |
+| Path                               | Cold start | Per-file warm   |
+| ---------------------------------- | ---------- | --------------- |
+| Node CLI (`npx`)                   | ~80ms      | ~3–5ms          |
+| Standalone binary (`deno compile`) | ~30ms      | ~3–5ms          |
+| Type-aware rule (first run)        | +50–150ms  | TS Program load |
 
-Linear scan of ~200 files/sec on a single core. Rouvy companion app: 470 files in 415ms.
+Linear scan of ~200 files/sec on a single core. Rouvy companion app: 470 files
+in 415ms.
 
 ## Standalone binary
 
-The CLI also ships as a single static binary built with `deno compile` — no Node, no Deno, no install required:
+The CLI also ships as a single static binary built with `deno compile` — no
+Node, no Deno, no install required:
 
 ```bash
 git clone https://github.com/rehoutm/spaghetti-hook-o-gnese
@@ -164,8 +179,13 @@ deno task build:bin
 
 ## Honest limitations
 
-- **`custom-hook-depth` uses the TypeScript Compiler API**, not tsgolint's Go backend. Oxlint's JS plugin API doesn't expose tsgolint type info to custom rules, so we lazily build a `ts.Program` for that one rule. ~50–150ms first-run cost, then cached.
-- **Sequential file scan.** Worker-thread parallelism is on the v1.5 list. Current per-file cost (~3–5ms) means linear scanning is fine through ~thousands of files.
+- **`custom-hook-depth` uses the TypeScript Compiler API**, not tsgolint's Go
+  backend. Oxlint's JS plugin API doesn't expose tsgolint type info to custom
+  rules, so we lazily build a `ts.Program` for that one rule. ~50–150ms
+  first-run cost, then cached.
+- **Sequential file scan.** Worker-thread parallelism is on the v1.5 list.
+  Current per-file cost (~3–5ms) means linear scanning is fine through
+  ~thousands of files.
 - **No daemon mode yet.** Each invocation is a fresh process. Also v1.5.
 
 ## Compatibility

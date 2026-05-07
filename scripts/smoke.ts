@@ -35,14 +35,25 @@ if (!root) {
 const cwd = Deno.cwd();
 const targetRoot = resolve(root);
 const exts = new Set([".ts", ".tsx", ".jsx", ".js"]);
-const skipDirs = new Set(["node_modules", ".git", "dist", "build", "ios", "android", "__mocks__", "__tests__"]);
 
 const diagnostics: Diag[] = [];
 let fileCount = 0;
 let parseFailures = 0;
 const start = performance.now();
 
-for await (const entry of fsWalk(root, { includeDirs: false, skip: [/node_modules/, /\.git/, /\/dist\//, /\/build\//, /\/ios\//, /\/android\//] })) {
+for await (
+  const entry of fsWalk(root, {
+    includeDirs: false,
+    skip: [
+      /node_modules/,
+      /\.git/,
+      /\/dist\//,
+      /\/build\//,
+      /\/ios\//,
+      /\/android\//,
+    ],
+  })
+) {
   const ext = entry.path.slice(entry.path.lastIndexOf("."));
   if (!exts.has(ext)) continue;
   fileCount++;
@@ -57,7 +68,10 @@ for await (const entry of fsWalk(root, { includeDirs: false, skip: [/node_module
   const lang = ext === ".tsx" || ext === ".jsx" ? "tsx" : "ts";
   let program: any;
   try {
-    const result = parseSync(entry.path, source, { lang, sourceType: "module" });
+    const result = parseSync(entry.path, source, {
+      lang,
+      sourceType: "module",
+    });
     program = result.program;
     if (result.errors && result.errors.length > 0) {
       // Soft-tolerate parse errors — common in monorepos with experimental syntax.
@@ -75,7 +89,9 @@ for await (const entry of fsWalk(root, { includeDirs: false, skip: [/node_module
       cwd: targetRoot,
       report: (d: { message: string; node: any }) => fileDiags.push(d),
     };
-    const handlers: Record<string, (n: any) => void> = (rule as any).create(context);
+    const handlers: Record<string, (n: any) => void> = (rule as any).create(
+      context,
+    );
 
     function visit(n: any) {
       if (!n || typeof n !== "object") return;
@@ -93,7 +109,10 @@ for await (const entry of fsWalk(root, { includeDirs: false, skip: [/node_module
       const start = d.node.start ?? 0;
       let line = 1, column = 1;
       for (let i = 0; i < start && i < source.length; i++) {
-        if (source[i] === "\n") { line++; column = 1; } else { column++; }
+        if (source[i] === "\n") {
+          line++;
+          column = 1;
+        } else column++;
       }
       diagnostics.push({
         file: relative(cwd, entry.path),
@@ -119,8 +138,14 @@ for (const d of diagnostics) {
 for (const [file, diags] of byFile) {
   console.log(`\n${file}`);
   for (const d of diags) {
-    console.log(`  ${String(d.line).padStart(4)}:${String(d.column).padEnd(3)}  warning  ${d.message}  ${d.rule}`);
+    console.log(
+      `  ${String(d.line).padStart(4)}:${
+        String(d.column).padEnd(3)
+      }  warning  ${d.message}  ${d.rule}`,
+    );
   }
 }
 
-console.log(`\n${diagnostics.length} finding(s) across ${byFile.size} file(s) of ${fileCount} scanned (${parseFailures} parse failures) in ${elapsed}s`);
+console.log(
+  `\n${diagnostics.length} finding(s) across ${byFile.size} file(s) of ${fileCount} scanned (${parseFailures} parse failures) in ${elapsed}s`,
+);

@@ -61,7 +61,11 @@ export async function runCli(opts: CliOptions, io: RuntimeIO): Promise<number> {
     return 2;
   }
 
-  const { engine, ignore } = await loadConfig(opts.cwd, opts.config, io.readTextFile);
+  const { engine, ignore } = await loadConfig(
+    opts.cwd,
+    opts.config,
+    io.readTextFile,
+  );
   if (opts.typeAware) engine.typeAware = true;
   const finalEngine = applyCliRuleOverrides(engine, opts.ruleOverrides);
 

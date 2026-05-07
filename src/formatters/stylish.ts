@@ -1,6 +1,8 @@
 import type { Formatter } from "./types.ts";
 
-export const stylish: Formatter = ({ diagnostics, filesScanned, durationMs }) => {
+export const stylish: Formatter = (
+  { diagnostics, filesScanned, durationMs },
+) => {
   if (diagnostics.length === 0) {
     return `✓ no problems found (${filesScanned} files, ${durationMs}ms)\n`;
   }
@@ -21,7 +23,11 @@ export const stylish: Formatter = ({ diagnostics, filesScanned, durationMs }) =>
   const errors = diagnostics.filter((d) => d.severity === "error").length;
   const warnings = diagnostics.filter((d) => d.severity === "warn").length;
   lines.push(
-    `\n${diagnostics.length} problems (${errors} error${errors === 1 ? "" : "s"}, ${warnings} warning${warnings === 1 ? "" : "s"}) in ${filesScanned} files, ${durationMs}ms`,
+    `\n${diagnostics.length} problems (${errors} error${
+      errors === 1 ? "" : "s"
+    }, ${warnings} warning${
+      warnings === 1 ? "" : "s"
+    }) in ${filesScanned} files, ${durationMs}ms`,
   );
   return lines.join("\n") + "\n";
 };

@@ -1,7 +1,9 @@
 // tests/cli_test.ts
 import { assert, assertEquals } from "@std/assert";
 
-async function runCli(args: string[]): Promise<{ stdout: string; stderr: string; code: number }> {
+async function runCli(
+  args: string[],
+): Promise<{ stdout: string; stderr: string; code: number }> {
   const cmd = new Deno.Command("deno", {
     args: [
       "run",
@@ -101,6 +103,8 @@ Deno.test("cli: --type-aware enables custom-hook-depth", async () => {
   ]);
   const parsed = JSON.parse(stdout);
   assert(
-    parsed.diagnostics.some((d: any) => d.rule === "hook-o-gnese/custom-hook-depth"),
+    parsed.diagnostics.some((d: any) =>
+      d.rule === "hook-o-gnese/custom-hook-depth"
+    ),
   );
 });

@@ -2,7 +2,10 @@ import { scoreEffect } from "../scoring/effect-score.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
 import { isHookCall } from "../ast-helpers.ts";
 
-interface Options { threshold?: number; errorThreshold?: number }
+interface Options {
+  threshold?: number;
+  errorThreshold?: number;
+}
 
 export interface RuleContext {
   options: unknown[];
@@ -37,8 +40,9 @@ export const noFatEffects = {
               : "");
           const severity = score.total >= errorThreshold ? "error" : "warn";
           context.report({
-            message:
-              `useEffect entropy ${score.total.toFixed(1)} ≥ ${threshold} (${breakdown})`,
+            message: `useEffect entropy ${
+              score.total.toFixed(1)
+            } ≥ ${threshold} (${breakdown})`,
             node,
             severity,
           });

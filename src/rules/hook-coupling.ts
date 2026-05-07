@@ -3,7 +3,10 @@ import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
 import { isReactComponent } from "../ast-helpers.ts";
 import type { RuleContext } from "./no-fat-effects.ts";
 
-interface Options { threshold?: number; errorThreshold?: number }
+interface Options {
+  threshold?: number;
+  errorThreshold?: number;
+}
 
 export const hookCoupling = {
   meta: {
