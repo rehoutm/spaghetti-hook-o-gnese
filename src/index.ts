@@ -1,7 +1,7 @@
-import { eslintCompatPlugin } from "@oxlint/plugins";
+import { eslintCompatPlugin, type Plugin } from "@oxlint/plugins";
 import { ALL_RULES } from "./rules/registry.ts";
 
-const plugin = eslintCompatPlugin({
+const plugin: Plugin = eslintCompatPlugin({
   meta: { name: "hook-o-gnese" },
   rules: ALL_RULES,
 });
