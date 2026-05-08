@@ -1,3 +1,4 @@
 import type { Formatter } from "./types.ts";
 
-export const json: Formatter = (ctx) => JSON.stringify(ctx, null, 2);
+export const json: Formatter = ({ diagnostics, filesScanned, durationMs }) =>
+  JSON.stringify({ diagnostics, filesScanned, durationMs }, null, 2);
