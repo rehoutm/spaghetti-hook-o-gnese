@@ -36,11 +36,28 @@ Deno.test("stylish: groups by file, prints summary", () => {
   assert(out.includes("1 warning"));
 });
 
+Deno.test("stylish: no ANSI codes when color disabled", () => {
+  const out = stylish(ctx);
+  assert(!out.includes("\x1b["), "expected no ANSI escapes when color is off");
+});
+
+Deno.test("stylish: paints errors red and warnings yellow when color enabled", () => {
+  const out = stylish({ ...ctx, color: true });
+  // 31 = red (errors), 33 = yellow (warnings)
+  assert(out.includes("[31m"), "expected red ANSI for error severity");
+  assert(out.includes("[33m"), "expected yellow ANSI for warn severity");
+});
+
 Deno.test("json: round-trips diagnostics", () => {
   const parsed = JSON.parse(json(ctx));
   assertEquals(parsed.diagnostics.length, 2);
   assertEquals(parsed.filesScanned, 5);
   assertEquals(parsed.durationMs, 42);
+});
+
+Deno.test("json: does not leak color flag into payload", () => {
+  const parsed = JSON.parse(json({ ...ctx, color: true }));
+  assertEquals(parsed.color, undefined);
 });
 
 Deno.test("sarif: emits SARIF 2.1.0 envelope", () => {

@@ -26,6 +26,8 @@ const overrides = (values.rule ?? []).map((spec) => {
   return { id, severity: sev as Severity };
 });
 
+const color = !!process.stdout.isTTY && !process.env.NO_COLOR &&
+  values.format === "stylish";
 const code = await runCli(
   {
     paths: positionals,
@@ -34,6 +36,7 @@ const code = await runCli(
     typeAware: !!values["type-aware"],
     ruleOverrides: overrides,
     cwd: process.cwd(),
+    color,
   },
   {
     readTextFile: (p) => readFile(p, "utf-8"),

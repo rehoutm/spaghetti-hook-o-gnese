@@ -43,6 +43,7 @@ export interface CliOptions {
   typeAware: boolean;
   ruleOverrides: Array<{ id: string; severity: Severity }>;
   cwd: string;
+  color?: boolean;
 }
 
 export interface RuntimeIO {
@@ -101,6 +102,7 @@ export async function runCli(opts: CliOptions, io: RuntimeIO): Promise<number> {
     diagnostics,
     filesScanned: files.length,
     durationMs,
+    color: !!opts.color,
   }));
 
   if (diagnostics.some((d) => d.severity === "error")) return 1;

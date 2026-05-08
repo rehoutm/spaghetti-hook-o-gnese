@@ -32,6 +32,8 @@ if (import.meta.main) {
   });
 
   const enc = new TextEncoder();
+  const color = Deno.stdout.isTerminal() && !Deno.env.get("NO_COLOR") &&
+    args.format === "stylish";
   const code = await runCli(
     {
       paths: args._.map(String),
@@ -40,6 +42,7 @@ if (import.meta.main) {
       typeAware: !!args["type-aware"],
       ruleOverrides: overrides,
       cwd: Deno.cwd(),
+      color,
     },
     {
       readTextFile: (p) => Deno.readTextFile(p),
