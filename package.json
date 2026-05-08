@@ -1,6 +1,6 @@
 {
   "name": "hook-o-gnese",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Score React hook complexity. Runs as oxlint plugin or standalone CLI.",
   "type": "module",
   "module": "./dist/index.mjs",

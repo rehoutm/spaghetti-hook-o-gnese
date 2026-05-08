@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.9](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.8...v0.0.9) (2026-05-08)
+
+
+### Features
+
+* colorize stylish CLI output by severity ([b3a9959](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/b3a9959d744f5b5b4be5488d8b8f28fee0137329))
+* colorize stylish output by severity ([098c57b](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/098c57b6b1b645bd3255a5db4757e65999188e9c))
+
 ## [0.0.8](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.7...v0.0.8) (2026-05-07)
 
 
