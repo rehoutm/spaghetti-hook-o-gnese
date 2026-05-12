@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 // tests/rules/no-fat-effects_test.ts
 import { assert, assertEquals } from "@std/assert";
 import { parseSync } from "oxc-parser";

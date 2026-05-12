@@ -27,10 +27,11 @@ const BRANCH_TYPES = new Set([
 ]);
 
 export function scoreEffect(node: Node): EffectScore {
-  const args = (node as any).arguments as Node[];
+  const args = node.arguments as Node[];
   const fn = args?.[0] as Node | undefined;
-  const depsArr = args?.[1] as any;
-  const deps = Array.isArray(depsArr?.elements) ? depsArr.elements.length : 0;
+  const depsArr = args?.[1];
+  const elements = depsArr?.elements;
+  const deps = Array.isArray(elements) ? elements.length : 0;
   return finalize(deps, scoreFunctionBody(fn));
 }
 
@@ -93,11 +94,11 @@ function scoreFunctionBody(fn: Node | undefined): ScoreParts {
       hasSubscriptionLike,
     };
   }
-  const body = (fn as any).body as Node | undefined;
+  const body = fn.body as Node | undefined;
   if (body?.type === "BlockStatement") {
-    for (const stmt of (body as any).body as Node[]) {
+    for (const stmt of body.body as Node[]) {
       if (stmt.type === "ReturnStatement") {
-        const arg = (stmt as any).argument as Node | undefined;
+        const arg = stmt.argument as Node | undefined;
         if (
           arg &&
           (arg.type === "ArrowFunctionExpression" ||
@@ -109,9 +110,9 @@ function scoreFunctionBody(fn: Node | undefined): ScoreParts {
   walk(fn, (n) => {
     if (BRANCH_TYPES.has(n.type)) branches++;
     if (n.type === "CallExpression") {
-      const callee = (n as any).callee as Node;
+      const callee = n.callee as Node;
       if (callee?.type === "Identifier") {
-        const name = (callee as any).name as string;
+        const name = callee.name as string;
         if (SET_STATE_RE.test(name)) setStateCount++;
         if (name === "useEffect") nestedEffects++;
         if (
@@ -122,9 +123,9 @@ function scoreFunctionBody(fn: Node | undefined): ScoreParts {
         ) hasSubscriptionLike = true;
       }
       if (callee?.type === "MemberExpression") {
-        const prop = (callee as any).property as Node;
+        const prop = callee.property as Node;
         if (prop?.type === "Identifier") {
-          const name = (prop as any).name as string;
+          const name = prop.name as string;
           if (
             name === "addEventListener" ||
             name === "subscribe" ||
@@ -170,18 +171,18 @@ export function collectUseCallbackInlineBodies(
   const out = new Map<string, Node>();
   walk(componentNode, (n) => {
     if (n.type !== "VariableDeclarator") return true;
-    const id = (n as any).id as Node | undefined;
-    const init = (n as any).init as Node | undefined;
+    const id = n.id as Node | undefined;
+    const init = n.init as Node | undefined;
     if (id?.type !== "Identifier") return true;
     if (!init || init.type !== "CallExpression") return true;
     if (!isHookCall(init, "useCallback")) return true;
-    const cbArgs = (init as any).arguments as Node[] | undefined;
+    const cbArgs = init.arguments as Node[] | undefined;
     const inline = cbArgs?.[0];
     if (
       inline?.type === "ArrowFunctionExpression" ||
       inline?.type === "FunctionExpression"
     ) {
-      out.set((id as any).name as string, inline);
+      out.set(id.name as string, inline);
     }
     return true;
   });

@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { assert, assertEquals } from "@std/assert";
 import { parseSync } from "oxc-parser";
 import { customHookDepth } from "../../src/rules/custom-hook-depth.ts";

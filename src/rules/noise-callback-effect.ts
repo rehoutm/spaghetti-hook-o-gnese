@@ -1,5 +1,5 @@
 import { scoreNoiseCallback } from "../scoring/noise-callback-score.ts";
-import { isReactComponent } from "../ast-helpers.ts";
+import { isReactComponent, type Node } from "../ast-helpers.ts";
 import type { RuleContext } from "./types.ts";
 
 export const noiseCallbackEffect = {
@@ -11,7 +11,7 @@ export const noiseCallbackEffect = {
     },
   },
   create(context: RuleContext) {
-    function check(node: any) {
+    function check(node: Node) {
       if (!isReactComponent(node)) return;
       const findings = scoreNoiseCallback(node);
       for (const f of findings) {

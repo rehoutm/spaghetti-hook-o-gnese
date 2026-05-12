@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 // tests/ast-helpers_test.ts
 import { assertEquals } from "@std/assert";
 import { parseSync } from "oxc-parser";

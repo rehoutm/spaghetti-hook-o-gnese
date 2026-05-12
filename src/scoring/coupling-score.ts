@@ -21,25 +21,25 @@ export function scoreCoupling(componentNode: Node): CouplingScore {
   const refNames = new Set<string>();
   walk(componentNode, (n) => {
     if (n.type === "VariableDeclarator") {
-      const init = (n as any).init as Node | undefined;
-      const id = (n as any).id as Node | undefined;
+      const init = n.init as Node | undefined;
+      const id = n.id as Node | undefined;
       if (init?.type !== "CallExpression") return true;
       if (
         isHookCall(init, "useState") &&
         id?.type === "ArrayPattern"
       ) {
-        const els = (id as any).elements as Node[];
+        const els = id.elements as Node[];
         const stateId = els?.[0];
         const setterId = els?.[1];
         if (stateId?.type === "Identifier" && setterId?.type === "Identifier") {
           stateBySetter.set(
-            (setterId as any).name as string,
-            (stateId as any).name as string,
+            setterId.name as string,
+            stateId.name as string,
           );
         }
       }
       if (isHookCall(init, "useRef") && id?.type === "Identifier") {
-        refNames.add((id as any).name as string);
+        refNames.add(id.name as string);
       }
     }
     return true;
@@ -51,7 +51,7 @@ export function scoreCoupling(componentNode: Node): CouplingScore {
 
   walk(componentNode, (n) => {
     if (n.type === "CallExpression" && isHookCall(n, "useEffect")) {
-      const effectFn = ((n as any).arguments as Node[])?.[0];
+      const effectFn = (n.arguments as Node[])?.[0];
       if (!effectFn) return true;
 
       const stateRefs = new Set<string>();
@@ -67,19 +67,19 @@ export function scoreCoupling(componentNode: Node): CouplingScore {
 
       walk(effectFn, (m) => {
         if (m.type === "Identifier") {
-          const name = (m as any).name as string;
+          const name = m.name as string;
           if (stateNames.has(name)) stateRefs.add(name);
         }
         if (m.type === "CallExpression") {
-          const callee = (m as any).callee as Node;
+          const callee = m.callee as Node;
           if (callee?.type === "Identifier") {
-            const setter = (callee as any).name as string;
+            const setter = callee.name as string;
             const stateName = stateBySetter.get(setter);
             if (stateName) stateWrites.add(stateName);
           }
         }
         if (m.type === "AssignmentExpression") {
-          const left = (m as any).left as Node | undefined;
+          const left = m.left as Node | undefined;
           if (left?.type === "MemberExpression") {
             lhsMembers.add(left);
             const refName = refCurrentName(left);
@@ -143,7 +143,7 @@ function collectDepClusters(componentNode: Node): DepCluster[] {
     if (n.type !== "CallExpression") return true;
     const hook = getHookName(n);
     if (!hook || !DEPS_HOOKS.has(hook)) return true;
-    const args = (n as any).arguments as Node[] | undefined;
+    const args = n.arguments as Node[] | undefined;
     // useImperativeHandle's deps is arg[2]; the rest use arg[1].
     const depsArg = hook === "useImperativeHandle" ? args?.[2] : args?.[1];
     if (depsArg?.type !== "ArrayExpression") return true;
@@ -168,13 +168,13 @@ function collectDepClusters(componentNode: Node): DepCluster[] {
  * return null — we can't fingerprint reliably without scope analysis.
  */
 function fingerprintDeps(depsArr: Node): string | null {
-  const elements = (depsArr as any).elements as Array<Node | null> | undefined;
+  const elements = depsArr.elements as Array<Node | null> | undefined;
   if (!elements) return null;
   const names: string[] = [];
   for (const el of elements) {
     if (!el) continue;
     if (el.type !== "Identifier") return null;
-    names.push((el as any).name as string);
+    names.push(el.name as string);
   }
   return [...new Set(names)].sort().join(",");
 }
@@ -185,11 +185,11 @@ function fingerprintDeps(depsArr: Node): string | null {
  */
 function refCurrentName(node: Node): string | null {
   if (node.type !== "MemberExpression") return null;
-  if ((node as any).computed) return null;
-  const obj = (node as any).object as Node | undefined;
-  const prop = (node as any).property as Node | undefined;
+  if (node.computed) return null;
+  const obj = node.object as Node | undefined;
+  const prop = node.property as Node | undefined;
   if (obj?.type !== "Identifier") return null;
   if (prop?.type !== "Identifier") return null;
-  if ((prop as any).name !== "current") return null;
-  return (obj as any).name as string;
+  if (prop.name !== "current") return null;
+  return obj.name as string;
 }

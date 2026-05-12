@@ -1,6 +1,6 @@
 import { scoreComponentState } from "../scoring/state-score.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
-import { isReactComponent } from "../ast-helpers.ts";
+import { isReactComponent, type Node } from "../ast-helpers.ts";
 import type { RuleContext } from "./types.ts";
 
 interface Options {
@@ -18,7 +18,7 @@ export const stateScatter = {
     const threshold = opts.threshold ?? DEFAULT_THRESHOLDS.stateScatter.warn;
     const errorThreshold = opts.errorThreshold ??
       DEFAULT_THRESHOLDS.stateScatter.error;
-    function check(node: any) {
+    function check(node: Node) {
       if (!isReactComponent(node)) return;
       const s = scoreComponentState(node);
       if (s.total >= threshold) {

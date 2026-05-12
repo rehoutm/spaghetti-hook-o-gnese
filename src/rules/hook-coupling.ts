@@ -1,6 +1,6 @@
 import { scoreCoupling } from "../scoring/coupling-score.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
-import { isReactComponent } from "../ast-helpers.ts";
+import { isReactComponent, type Node } from "../ast-helpers.ts";
 import type { RuleContext } from "./types.ts";
 
 interface Options {
@@ -20,7 +20,7 @@ export const hookCoupling = {
     const threshold = opts.threshold ?? DEFAULT_THRESHOLDS.hookCoupling.warn;
     const errorThreshold = opts.errorThreshold ??
       DEFAULT_THRESHOLDS.hookCoupling.error;
-    function check(node: any) {
+    function check(node: Node) {
       if (!isReactComponent(node)) return;
       const s = scoreCoupling(node);
       if (s.total < threshold) return;

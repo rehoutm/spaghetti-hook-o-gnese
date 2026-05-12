@@ -12,7 +12,7 @@ type Node = { type: string; [k: string]: unknown };
  * effect's, so deps-laundering doesn't hide complexity).
  */
 export function passthroughCallTarget(useEffectCall: Node): string | null {
-  const args = (useEffectCall as any).arguments as Node[] | undefined;
+  const args = useEffectCall.arguments as Node[] | undefined;
   const fn = args?.[0] as Node | undefined;
   if (!fn) return null;
   if (
@@ -21,7 +21,7 @@ export function passthroughCallTarget(useEffectCall: Node): string | null {
   ) {
     return null;
   }
-  const body = (fn as any).body as Node | undefined;
+  const body = fn.body as Node | undefined;
   if (!body) return null;
 
   // Expression-bodied arrow: () => cb()
@@ -30,23 +30,23 @@ export function passthroughCallTarget(useEffectCall: Node): string | null {
   }
 
   if (body.type !== "BlockStatement") return null;
-  const stmts = (body as any).body as Node[];
+  const stmts = body.body as Node[];
   if (stmts.length !== 1) return null;
   const stmt = stmts[0];
 
   if (stmt.type === "ExpressionStatement") {
-    const expr = (stmt as any).expression as Node | undefined;
+    const expr = stmt.expression as Node | undefined;
     if (expr?.type === "CallExpression") return calleeIdentName(expr);
   }
   if (stmt.type === "ReturnStatement") {
-    const arg = (stmt as any).argument as Node | undefined;
+    const arg = stmt.argument as Node | undefined;
     if (arg?.type === "CallExpression") return calleeIdentName(arg);
   }
   return null;
 }
 
 function calleeIdentName(call: Node): string | null {
-  const callee = (call as any).callee as Node | undefined;
+  const callee = call.callee as Node | undefined;
   if (callee?.type !== "Identifier") return null;
-  return (callee as any).name as string;
+  return callee.name as string;
 }

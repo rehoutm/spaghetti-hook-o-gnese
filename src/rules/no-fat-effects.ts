@@ -3,8 +3,12 @@ import {
   scoreEffectAggregated,
 } from "../scoring/effect-score.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
-import { isHookCall, isReactComponent, walk } from "../ast-helpers.ts";
-import type { RuleContext } from "./types.ts";
+import {
+  isHookCall,
+  isReactComponent,
+  type Node,
+  walk,
+} from "../ast-helpers.ts";
 
 interface Options {
   threshold?: number;
@@ -35,7 +39,7 @@ export const noFatEffects = {
     const errorThreshold = opts.errorThreshold ??
       DEFAULT_THRESHOLDS.fatEffect.error;
 
-    function check(node: any) {
+    function check(node: Node) {
       // Walks each component as a unit so the aggregator can resolve local
       // useCallback bodies and fold their shape back into the effect's score
       // (otherwise the deps-laundering trick hides complexity). The
@@ -60,7 +64,9 @@ export const noFatEffects = {
         const severity = score.total >= errorThreshold ? "error" : "warn";
         context.report({
           message: `useEffect entropy ${
-            score.total.toFixed(1)
+            score.total.toFixed(
+              1,
+            )
           } ≥ ${threshold} (${breakdown})`,
           node: n,
           severity,

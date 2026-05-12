@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import process from "node:process";
 import { parseArgs } from "node:util";
 import { readFile } from "node:fs/promises";
 import { HELP, runCli } from "./cli-core.ts";

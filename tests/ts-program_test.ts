@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 // tests/ts-program_test.ts
 import { assert, assertEquals } from "@std/assert";
 import { TsProgramCache } from "../src/ts-program.ts";

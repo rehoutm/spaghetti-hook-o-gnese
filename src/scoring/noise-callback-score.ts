@@ -33,14 +33,14 @@ export function scoreNoiseCallback(
 
   walk(componentNode, (n) => {
     if (n.type === "VariableDeclarator") {
-      const init = (n as any).init as Node | undefined;
-      const id = (n as any).id as Node | undefined;
+      const init = n.init as Node | undefined;
+      const id = n.id as Node | undefined;
       if (
         init?.type === "CallExpression" &&
         isHookCall(init, "useCallback") &&
         id?.type === "Identifier"
       ) {
-        declByName.set((id as any).name as string, n);
+        declByName.set(id.name as string, n);
         declIdNodes.add(id);
       }
     }
@@ -49,7 +49,7 @@ export function scoreNoiseCallback(
       if (target) passthroughByName.set(target, n);
     }
     if (n.type === "Identifier" && !declIdNodes.has(n)) {
-      const name = (n as any).name as string;
+      const name = n.name as string;
       refCounts.set(name, (refCounts.get(name) ?? 0) + 1);
     }
     return true;
@@ -61,7 +61,7 @@ export function scoreNoiseCallback(
     if (!decl) continue;
     let insideRefs = 0;
     walk(effectNode, (m) => {
-      if (m.type === "Identifier" && (m as any).name === name) insideRefs++;
+      if (m.type === "Identifier" && m.name === name) insideRefs++;
       return true;
     });
     if ((refCounts.get(name) ?? 0) - insideRefs === 0) {
