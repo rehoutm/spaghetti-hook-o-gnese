@@ -27,7 +27,7 @@ import { stateScatter } from "./rules/state-scatter.ts";
 import { hookCoupling } from "./rules/hook-coupling.ts";
 import { customHookDepth } from "./rules/custom-hook-depth.ts";
 import { TsProgramCache } from "./ts-program.ts";
-import type { RuleContext } from "./rules/no-fat-effects.ts";
+import type { RuleContext } from "./rules/types.ts";
 
 // ---------------------------------------------------------------------------
 // Internal types

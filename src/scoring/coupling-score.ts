@@ -3,7 +3,11 @@ import { getHookName, isHookCall, walk } from "../ast-helpers.ts";
 type Node = { type: string; [k: string]: unknown };
 
 export interface DepCluster {
-  /** Sorted, deduped identifier names joined with ",". Empty array → "[]". */
+  /**
+   * Sorted, deduped identifier names joined with ",". Empty dep arrays are
+   * skipped before they reach this point — they aren't a cluster signal — so
+   * a `DepCluster` instance always has a non-empty fingerprint.
+   */
   fingerprint: string;
   /** Each member is a hook call (useEffect/useCallback/useMemo/…). */
   members: Node[];

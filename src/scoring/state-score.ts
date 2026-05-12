@@ -1,4 +1,4 @@
-import { isHookCall, walk } from "../ast-helpers.ts";
+import { isHookCall, walk, walkComponentBody } from "../ast-helpers.ts";
 
 type Node = { type: string; [k: string]: unknown };
 
@@ -6,6 +6,13 @@ export interface StateScore {
   useStateCount: number;
   correlatedSetters: number;
   reducerSlots: number;
+  /**
+   * True when at least one `useReducer` has slots > 0 but no logic-bearing
+   * case — a useState wearing a moustache. Lets `state-scatter` distinguish
+   * a misleading "lots of slots" reducer from a real one before picking a
+   * hint message.
+   */
+  hasSetterShapedReducer: boolean;
   total: number;
 }
 
@@ -14,9 +21,10 @@ export function scoreComponentState(componentNode: Node): StateScore {
   let useStateCount = 0;
   let reducerSlots = 0;
   let reducerDiscount = 0;
+  let hasSetterShapedReducer = false;
 
   // First pass: collect useState setters AND analyse useReducer calls.
-  walk(componentNode, (n) => {
+  walkComponentBody(componentNode, (n) => {
     if (!n) return true;
     if (n.type !== "VariableDeclarator") return true;
     const init = n.init as Node | undefined;
@@ -37,13 +45,14 @@ export function scoreComponentState(componentNode: Node): StateScore {
       const r = scoreReducer(init);
       reducerSlots += r.slots;
       if (r.hasLogicBearingCase) reducerDiscount += 1;
+      if (r.slots > 0 && !r.hasLogicBearingCase) hasSetterShapedReducer = true;
     }
     return true;
   });
 
   // Second pass: count correlated setters.
   let correlatedSetters = 0;
-  walk(componentNode, (n) => {
+  walkComponentBody(componentNode, (n) => {
     if (!n) return true;
     if (
       n.type === "FunctionDeclaration" ||
@@ -51,7 +60,7 @@ export function scoreComponentState(componentNode: Node): StateScore {
       n.type === "ArrowFunctionExpression"
     ) {
       const calledSetters = new Set<string>();
-      walk(n, (m) => {
+      walkComponentBody(n, (m) => {
         if (!m) return true;
         if (m.type === "CallExpression") {
           const callee = m.callee as Node;
@@ -69,7 +78,13 @@ export function scoreComponentState(componentNode: Node): StateScore {
 
   const reducerContribution = Math.max(0, reducerSlots - reducerDiscount);
   const total = useStateCount + reducerContribution + correlatedSetters * 0.5;
-  return { useStateCount, correlatedSetters, reducerSlots, total };
+  return {
+    useStateCount,
+    correlatedSetters,
+    reducerSlots,
+    hasSetterShapedReducer,
+    total,
+  };
 }
 
 interface ReducerShape {

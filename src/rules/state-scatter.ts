@@ -23,7 +23,7 @@ export const stateScatter = {
       const s = scoreComponentState(node);
       if (s.total >= threshold) {
         const severity = s.total >= errorThreshold ? "error" : "warn";
-        const hint = s.reducerSlots > 0
+        const hint = s.hasSetterShapedReducer
           ? "Reducer cases look setter-shaped — collapse correlated fields or split the component."
           : "Consider useReducer, or split the component.";
         context.report({

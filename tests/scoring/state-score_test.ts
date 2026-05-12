@@ -76,6 +76,7 @@ Deno.test("scoreComponentState: setter-shaped reducer counts slots", () => {
   assertEquals(score.reducerSlots, 5);
   // setter-shaped, no logic-bearing case → no discount → full 5 slots count
   assertEquals(score.total, 5);
+  assertEquals(score.hasSetterShapedReducer, true);
 });
 
 Deno.test("scoreComponentState: logic-bearing reducer earns discount", () => {
@@ -99,6 +100,7 @@ Deno.test("scoreComponentState: logic-bearing reducer earns discount", () => {
   assertEquals(score.reducerSlots, 2);
   // discount of 1 brings contribution to 1
   assertEquals(score.total, 1);
+  assertEquals(score.hasSetterShapedReducer, false);
 });
 
 Deno.test("scoreComponentState: reducer with imported initial state has zero slots", () => {

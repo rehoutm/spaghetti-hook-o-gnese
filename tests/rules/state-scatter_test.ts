@@ -43,6 +43,36 @@ Deno.test("state-scatter: setter-shaped reducer fires", async () => {
   );
 });
 
+Deno.test("state-scatter: logic-bearing reducer above threshold avoids setter-shaped hint", () => {
+  const diags = runRule(
+    stateScatter,
+    `function Foo() {
+      const [s, dispatch] = useReducer(
+        (state, action) => {
+          switch (action.type) {
+            case "INC":
+              if (state.count >= 10) return state;
+              return { ...state, count: state.count + 1 };
+            default: return state;
+          }
+        },
+        { count: 0, a: 0, b: 0, c: 0, d: 0, e: 0, f: 0, g: 0 },
+      );
+      return <div />;
+    }`,
+  );
+  assert(diags.length >= 1, "expected diagnostic above threshold");
+  const msg = diags[0].message;
+  assert(
+    !msg.includes("setter-shaped"),
+    `logic-bearing reducer should not get setter-shaped hint, got: ${msg}`,
+  );
+  assert(
+    msg.includes("Consider useReducer, or split"),
+    `expected generic hint, got: ${msg}`,
+  );
+});
+
 Deno.test("state-scatter: logic-bearing reducer stays clean", () => {
   const diags = runRule(
     stateScatter,

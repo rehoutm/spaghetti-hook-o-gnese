@@ -7,25 +7,13 @@ import {
   isHookCall,
   isReactComponent,
   type Node,
-  walk,
+  walkComponentBody,
 } from "../ast-helpers.ts";
+import type { RuleContext } from "./types.ts";
 
 interface Options {
   threshold?: number;
   errorThreshold?: number;
-}
-
-export interface RuleContext {
-  options: unknown[];
-  filename?: string;
-  cwd?: string;
-  /** Optional pre-built TsProgramCache injected by the ESLint adapter. */
-  tsProgramCache?: import("../ts-program.ts").TsProgramCache;
-  report: (d: {
-    message: string;
-    node: unknown;
-    severity?: "warn" | "error";
-  }) => void;
 }
 
 export const noFatEffects = {
@@ -48,7 +36,7 @@ export const noFatEffects = {
         return;
       }
       const callbackBodies = collectUseCallbackInlineBodies(node);
-      walk(node, (n) => {
+      walkComponentBody(node, (n) => {
         if (n.type !== "CallExpression") return true;
         if (!isHookCall(n, "useEffect")) return true;
         const score = scoreEffectAggregated(n, callbackBodies);

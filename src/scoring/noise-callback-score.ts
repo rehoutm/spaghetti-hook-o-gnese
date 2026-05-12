@@ -1,4 +1,4 @@
-import { isHookCall, walk } from "../ast-helpers.ts";
+import { isHookCall, walk, walkComponentBody } from "../ast-helpers.ts";
 import { passthroughCallTarget } from "./passthrough.ts";
 
 type Node = { type: string; [k: string]: unknown };
@@ -31,7 +31,7 @@ export function scoreNoiseCallback(
   const passthroughByName = new Map<string, Node>();
   const refCounts = new Map<string, number>();
 
-  walk(componentNode, (n) => {
+  walkComponentBody(componentNode, (n) => {
     if (n.type === "VariableDeclarator") {
       const init = n.init as Node | undefined;
       const id = n.id as Node | undefined;

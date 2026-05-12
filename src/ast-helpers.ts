@@ -54,6 +54,22 @@ export function findReturnsJSX(node: Node): boolean {
   return found;
 }
 
+/**
+ * Walks `root` but stops descending into nested React components. The root
+ * itself is always visited; any *other* node that `isReactComponent()` accepts
+ * is treated as a scope boundary so its hooks are not folded into the parent
+ * component's score.
+ */
+export function walkComponentBody(
+  root: Node,
+  visit: (n: Node) => boolean | void,
+): void {
+  walk(root, (n) => {
+    if (n !== root && isReactComponent(n)) return false;
+    return visit(n);
+  });
+}
+
 export function walk(
   node: Node,
   visit: (n: Node) => boolean | void,
