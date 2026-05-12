@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import { join as joinPath } from "node:path";
+import process from "node:process";
 import type ts from "typescript";
 
 type TS = typeof ts;
@@ -49,6 +50,18 @@ export class TsProgramCache {
   constructor(rootDir: string) {
     this.rootDir = rootDir;
     this.ts = loadTs(rootDir);
+  }
+
+  // Alt constructor: accepts a pre-built ts.Program (e.g. from @typescript-eslint/parser
+  // parserServices) and skips findConfigFile/createProgram. The ts module is loaded via
+  // loadTs(cwd) — safe because @typescript-eslint/parser already resolved TS into
+  // the consumer's project, so it will always be in the require cache.
+  static fromProgram(program: ts.Program, cwd = process.cwd()): TsProgramCache {
+    const instance = Object.create(TsProgramCache.prototype) as TsProgramCache;
+    instance.program = program;
+    instance.rootDir = cwd;
+    instance.ts = loadTs(cwd);
+    return instance;
   }
 
   private getProgram(): ts.Program {

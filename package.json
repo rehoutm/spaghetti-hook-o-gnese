@@ -13,6 +13,10 @@
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.mts"
     },
+    "./eslint": {
+      "import": "./dist/eslint.mjs",
+      "types": "./dist/eslint.d.mts"
+    },
     "./engine": {
       "import": "./dist/engine.mjs",
       "types": "./dist/engine.d.mts"
@@ -46,10 +50,18 @@
     "access": "public"
   },
   "peerDependencies": {
+    "eslint": ">=9",
+    "@typescript-eslint/parser": ">=8",
     "oxlint": ">=1.63.0",
     "typescript": ">=6.0.0"
   },
   "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    },
+    "@typescript-eslint/parser": {
+      "optional": true
+    },
     "oxlint": {
       "optional": true
     },

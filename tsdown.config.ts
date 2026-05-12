@@ -52,6 +52,7 @@ export default defineConfig({
     index: "src/index.ts",
     cli: "src/cli.node.ts",
     engine: "src/engine.ts",
+    eslint: "src/eslint.ts",
   },
   format: ["esm"],
   platform: "node",

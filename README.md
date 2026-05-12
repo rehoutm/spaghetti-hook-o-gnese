@@ -108,6 +108,41 @@ Or import the recommended preset, which bundles tsgolint type-aware rules
 import { recommended } from "hook-o-gnese";
 ```
 
+### 3. ESLint plugin — if you're on ESLint
+
+Flat-config plugin for ESLint ≥ 9.
+
+```bash
+npm install -D hook-o-gnese eslint @typescript-eslint/parser
+```
+
+```ts
+// eslint.config.js
+import hookOGnese from "hook-o-gnese/eslint";
+import tsParser from "@typescript-eslint/parser";
+
+export default [
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        projectService: true, // required for custom-hook-depth
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    ...hookOGnese.configs.recommended,
+  },
+];
+```
+
+`custom-hook-depth` requires `parserServices.program` — easiest via
+`parserOptions.projectService: true` or `parserOptions.project: './tsconfig.json'`.
+Without it, the rule throws with an actionable error.
+
+Suppression comments (`eslint-disable-next-line hook-o-gnese/no-fat-effects`)
+cover both warn and error tiers for that rule — standard ESLint behavior.
+
 ## Output formats
 
 ```bash
