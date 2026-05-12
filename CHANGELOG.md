@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.0.10](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.9...v0.0.10) (2026-05-12)
+
+
+### Features
+
+* add ESLint flat-config adapter ([d2c2db4](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/d2c2db4313149806ae54fd6e93ccb3266b7ad8a0))
+* add ESLint flat-config plugin adapter ([1d13244](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/1d13244dcc3d61c7b9d0043db2f67d4f638c1ea5))
+* rules tweaking - callbacks misuse to hide useeffect deps, bad reducers, etc. ([2e8a90a](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/2e8a90a6ae5e35a18cbea9f7a3c257219e33e43d))
+* scaffold ESLint adapter packaging ([baf811e](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/baf811e700192c93ce4459aa127c578c231e785d))
+
+
+### Bug Fixes
+
+* import process from node:process in ts-program ([92536b1](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/92536b1c6c2291797605c2509ff517437b348f92))
+* linter errors ([87f018c](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/87f018c28d2b09a7e47b8d86bf32bf1a577977a2))
+* PR feedback — scope traversal to component, dedupe RuleContext, sharpen hint ([79b687a](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/79b687a4740f2735c6430d483f964ed29bcecabe))
+
 ## [0.0.9](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.8...v0.0.9) (2026-05-08)
 
 
