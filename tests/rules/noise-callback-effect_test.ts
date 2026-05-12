@@ -78,13 +78,26 @@ Deno.test("noise-callback-effect: non-passthrough effect (does more than call) =
   assertEquals(diags.length, 0);
 });
 
-Deno.test("noise-callback-effect: fixture file fires twice (and skips the legit case)", async () => {
+Deno.test("noise-callback-effect: fixture file fires on every laundered case (and skips legit cases)", async () => {
   const src = await Deno.readTextFile(
     "tests/fixtures/noise-callback-effect.tsx",
   );
   const diags = runRule(noiseCallbackEffect, src);
-  assertEquals(diags.length, 2);
   const names = diags.map((d) => d.message).join(" | ");
-  assert(names.includes("maybeShowPromo"));
-  assert(names.includes("sync"));
+  const expected = [
+    "maybeShowPromo",
+    "syncTimezone",
+    "handleNavigationSync",
+    "checkForNewErrors",
+    "sync",
+    "handleStateChange",
+  ];
+  for (const name of expected) {
+    assert(names.includes(name), `expected ${name} to be flagged: ${names}`);
+  }
+  assertEquals(
+    diags.length,
+    expected.length,
+    `expected ${expected.length} diags, got ${diags.length}: ${names}`,
+  );
 });

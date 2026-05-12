@@ -160,6 +160,7 @@ Deno.test("recommended config: plugin object shape is correct", () => {
   assertEquals(typeof plugin.rules["no-fat-effects"], "object");
   assertEquals(typeof plugin.rules["state-scatter"], "object");
   assertEquals(typeof plugin.rules["hook-coupling"], "object");
+  assertEquals(typeof plugin.rules["noise-callback-effect"], "object");
   assertEquals(typeof plugin.rules["custom-hook-depth"], "object");
 
   assertEquals(typeof plugin.configs.recommended, "object");
@@ -168,11 +169,12 @@ Deno.test("recommended config: plugin object shape is correct", () => {
   assertEquals(typeof rec.rules, "object");
 });
 
-Deno.test("recommended config: all four rules are referenced", () => {
+Deno.test("recommended config: all five rules are referenced", () => {
   const rec = plugin.configs.recommended as Record<string, unknown>;
   const rules = rec.rules as Record<string, unknown>;
   assertEquals("hook-o-gnese/no-fat-effects" in rules, true);
   assertEquals("hook-o-gnese/state-scatter" in rules, true);
   assertEquals("hook-o-gnese/hook-coupling" in rules, true);
+  assertEquals("hook-o-gnese/noise-callback-effect" in rules, true);
   assertEquals("hook-o-gnese/custom-hook-depth" in rules, true);
 });
