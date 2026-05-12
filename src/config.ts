@@ -9,6 +9,7 @@ const DEFAULT_RULES: Record<string, { severity: Severity; options?: unknown }> =
       severity: "warn",
       options: { maxDepth: 3 },
     },
+    "hook-o-gnese/noise-callback-effect": { severity: "warn" },
   };
 
 export const DEFAULT_IGNORE = [

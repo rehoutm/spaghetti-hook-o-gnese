@@ -1,7 +1,7 @@
 import { scoreComponentState } from "../scoring/state-score.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
 import { isReactComponent } from "../ast-helpers.ts";
-import type { RuleContext } from "./no-fat-effects.ts";
+import type { RuleContext } from "./types.ts";
 
 interface Options {
   threshold?: number;
@@ -23,9 +23,12 @@ export const stateScatter = {
       const s = scoreComponentState(node);
       if (s.total >= threshold) {
         const severity = s.total >= errorThreshold ? "error" : "warn";
+        const hint = s.reducerSlots > 0
+          ? "Reducer cases look setter-shaped — collapse correlated fields or split the component."
+          : "Consider useReducer, or split the component.";
         context.report({
           message:
-            `state scatter ${s.total} ≥ ${threshold} (useStates=${s.useStateCount}, correlated setters=${s.correlatedSetters}). Consider useReducer.`,
+            `state scatter ${s.total} ≥ ${threshold} (useStates=${s.useStateCount}, reducerSlots=${s.reducerSlots}, correlated setters=${s.correlatedSetters}). ${hint}`,
           node,
           severity,
         });

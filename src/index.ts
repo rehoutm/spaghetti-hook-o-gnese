@@ -38,6 +38,7 @@ export const recommended = {
     "hook-o-gnese/state-scatter": "warn",
     "hook-o-gnese/hook-coupling": "error",
     "hook-o-gnese/custom-hook-depth": ["warn", { maxDepth: 3 }],
+    "hook-o-gnese/noise-callback-effect": "warn",
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",
   },

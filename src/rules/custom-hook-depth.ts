@@ -1,7 +1,7 @@
 import { TsProgramCache } from "../ts-program.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
 import { getHookName } from "../ast-helpers.ts";
-import type { RuleContext } from "./no-fat-effects.ts";
+import type { RuleContext } from "./types.ts";
 
 interface Options {
   maxDepth?: number;

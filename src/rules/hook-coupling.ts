@@ -1,7 +1,7 @@
 import { scoreCoupling } from "../scoring/coupling-score.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
 import { isReactComponent } from "../ast-helpers.ts";
-import type { RuleContext } from "./no-fat-effects.ts";
+import type { RuleContext } from "./types.ts";
 
 interface Options {
   threshold?: number;
@@ -30,6 +30,23 @@ export const hookCoupling = {
           message:
             `useEffect reads + writes same state '${v.state}' (loop risk)`,
           node: v.effect,
+          severity,
+        });
+      }
+      for (const r of s.refAsState) {
+        context.report({
+          message:
+            `useEffect reads + writes '${r.ref}.current' — useRef is doing useState's job without React noticing. Use useState (or a useReducer slot) if the value drives render.`,
+          node: r.effect,
+          severity,
+        });
+      }
+      for (const c of s.depClusters) {
+        if (c.members.length < 3) continue;
+        context.report({
+          message:
+            `${c.members.length} hooks share the same deps [${c.fingerprint}] — they were probably one tangle split for cosmetic reasons. Collapse them or co-locate the state they actually depend on.`,
+          node: c.members[0],
           severity,
         });
       }
