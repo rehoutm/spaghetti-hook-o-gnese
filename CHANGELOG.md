@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.11](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.10...v0.0.11) (2026-05-12)
+
+
+### Bug Fixes
+
+* missing eslint rules, readme update ([c8f4c0d](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/c8f4c0d6031b4d2e1c2e9a471c8e10af8c11f38c))
+* missing eslint rules, readme update ([e799f22](https://github.com/rehoutm/spaghetti-hook-o-gnese/commit/e799f22386395584d99594094cf19acbf13d63fe))
+
 ## [0.0.10](https://github.com/rehoutm/spaghetti-hook-o-gnese/compare/v0.0.9...v0.0.10) (2026-05-12)
 
 
