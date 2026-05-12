@@ -11,8 +11,9 @@
 Most lint rules check syntax. **hook-o-gnese checks complexity.** It scores how
 dense your React hooks are — useEffect blocks bloated with branches and
 `setState` calls, components with too many `useState`s that should be a
-`useReducer`, effects that read and write the same state (loop bait), and custom
-hooks stacked too deep.
+`useReducer`, effects that read and write the same state (loop bait), custom
+hooks stacked too deep, and `useCallback` whose only consumer is a passthrough
+`useEffect` (deps-laundering).
 
 ```bash
 npx hook-o-gnese ./src
@@ -42,12 +43,13 @@ review.
 
 ## What it catches
 
-| Rule                | Smell                                                                  | Default            |
-| ------------------- | ---------------------------------------------------------------------- | ------------------ |
-| `no-fat-effects`    | useEffect blocks dense with branches, setState calls, missing cleanup  | warn at score ≥ 10 |
-| `state-scatter`     | Components with too many `useState` calls (probably want `useReducer`) | warn at score ≥ 5  |
-| `hook-coupling`     | useEffect that reads state it also writes (re-render loop bait)        | error              |
-| `custom-hook-depth` | Custom hooks calling custom hooks calling custom hooks (type-aware)    | warn at depth ≥ 3  |
+| Rule                    | Smell                                                                          | Default            |
+| ----------------------- | ------------------------------------------------------------------------------ | ------------------ |
+| `no-fat-effects`        | useEffect blocks dense with branches, setState calls, missing cleanup          | warn at score ≥ 10 |
+| `state-scatter`         | Components with too many `useState` calls (probably want `useReducer`)         | warn at score ≥ 5  |
+| `hook-coupling`         | useEffect that reads state it also writes (re-render loop bait)                | error              |
+| `custom-hook-depth`     | Custom hooks calling custom hooks calling custom hooks (type-aware)            | warn at depth ≥ 3  |
+| `noise-callback-effect` | useCallback whose only consumer is a passthrough useEffect (laundered deps)    | warn               |
 
 Full scoring formulas in [docs/thresholds.md](docs/thresholds.md). Per-rule
 reference in [docs/rule-reference.md](docs/rule-reference.md).
@@ -73,7 +75,8 @@ Add a `.hookogneserc.json` if you want to tune thresholds:
     "hook-o-gnese/no-fat-effects": ["warn", { "threshold": 12 }],
     "hook-o-gnese/state-scatter": "warn",
     "hook-o-gnese/hook-coupling": "error",
-    "hook-o-gnese/custom-hook-depth": ["warn", { "maxDepth": 3 }]
+    "hook-o-gnese/custom-hook-depth": ["warn", { "maxDepth": 3 }],
+    "hook-o-gnese/noise-callback-effect": "warn"
   },
   "ignore": ["**/legacy/**"],
   "typeAware": true
@@ -96,7 +99,8 @@ npm install -D hook-o-gnese oxlint
     "hook-o-gnese/no-fat-effects": "warn",
     "hook-o-gnese/state-scatter": "warn",
     "hook-o-gnese/hook-coupling": "error",
-    "hook-o-gnese/custom-hook-depth": ["warn", { "maxDepth": 3 }]
+    "hook-o-gnese/custom-hook-depth": ["warn", { "maxDepth": 3 }],
+    "hook-o-gnese/noise-callback-effect": "warn"
   }
 }
 ```

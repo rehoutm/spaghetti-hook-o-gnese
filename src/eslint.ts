@@ -26,6 +26,7 @@ import { noFatEffects } from "./rules/no-fat-effects.ts";
 import { stateScatter } from "./rules/state-scatter.ts";
 import { hookCoupling } from "./rules/hook-coupling.ts";
 import { customHookDepth } from "./rules/custom-hook-depth.ts";
+import { noiseCallbackEffect } from "./rules/noise-callback-effect.ts";
 import { TsProgramCache } from "./ts-program.ts";
 import type { RuleContext } from "./rules/types.ts";
 
@@ -89,6 +90,16 @@ const RULE_META: Record<string, Rule.RuleMetaData> = {
       url: `${BASE_URL}#hook-o-gnese-hook-coupling`,
     },
     schema: [thresholdSchema],
+    messages: baseMessages,
+  },
+  "noise-callback-effect": {
+    type: "problem",
+    docs: {
+      description:
+        "Flag useCallback whose only use-site is a passthrough useEffect (laundered deps)",
+      url: `${BASE_URL}#hook-o-gnese-noise-callback-effect`,
+    },
+    schema: [],
     messages: baseMessages,
   },
   "custom-hook-depth": {
@@ -189,6 +200,10 @@ const rules: Record<string, Rule.RuleModule> = {
   "no-fat-effects": wrapRule(noFatEffects, RULE_META["no-fat-effects"]),
   "state-scatter": wrapRule(stateScatter, RULE_META["state-scatter"]),
   "hook-coupling": wrapRule(hookCoupling, RULE_META["hook-coupling"]),
+  "noise-callback-effect": wrapRule(
+    noiseCallbackEffect,
+    RULE_META["noise-callback-effect"],
+  ),
   "custom-hook-depth": customHookDepthRule,
 };
 
@@ -200,6 +215,7 @@ const recommended = {
     "hook-o-gnese/no-fat-effects": "warn",
     "hook-o-gnese/state-scatter": "warn",
     "hook-o-gnese/hook-coupling": "error",
+    "hook-o-gnese/noise-callback-effect": "warn",
     "hook-o-gnese/custom-hook-depth": ["warn", { maxDepth: 3 }],
   },
 };
