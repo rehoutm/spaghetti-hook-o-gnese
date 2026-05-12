@@ -1,5 +1,9 @@
 # Rule reference
 
+All rules use the namespace `hook-o-gnese/<rule-id>` in both standalone CLI,
+oxlint, and ESLint adapters. Configuration syntax differs per host, but rule IDs
+and options are identical.
+
 ## hook-o-gnese/no-fat-effects
 
 Reports useEffect blocks whose entropy score crosses the threshold.
