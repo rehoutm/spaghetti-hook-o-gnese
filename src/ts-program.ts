@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import { join as joinPath } from "node:path";
+import process from "node:process";
 import type ts from "typescript";
 
 type TS = typeof ts;

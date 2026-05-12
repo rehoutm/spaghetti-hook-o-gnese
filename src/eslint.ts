@@ -68,7 +68,7 @@ const RULE_META: Record<string, Rule.RuleMetaData> = {
     type: "suggestion",
     docs: {
       description: "Flag dense useEffect blocks",
-      url: `${BASE_URL}#no-fat-effects`,
+      url: `${BASE_URL}#hook-o-gnese-no-fat-effects`,
     },
     schema: [thresholdSchema],
     messages: baseMessages,
@@ -77,7 +77,7 @@ const RULE_META: Record<string, Rule.RuleMetaData> = {
     type: "suggestion",
     docs: {
       description: "Flag components with too many useState calls",
-      url: `${BASE_URL}#state-scatter`,
+      url: `${BASE_URL}#hook-o-gnese-state-scatter`,
     },
     schema: [thresholdSchema],
     messages: baseMessages,
@@ -86,7 +86,7 @@ const RULE_META: Record<string, Rule.RuleMetaData> = {
     type: "suggestion",
     docs: {
       description: "Flag effects that read state they also write (loop bait)",
-      url: `${BASE_URL}#hook-coupling`,
+      url: `${BASE_URL}#hook-o-gnese-hook-coupling`,
     },
     schema: [thresholdSchema],
     messages: baseMessages,
@@ -96,7 +96,7 @@ const RULE_META: Record<string, Rule.RuleMetaData> = {
     docs: {
       description:
         "Flag custom hooks whose transitive nesting exceeds maxDepth (type-aware).",
-      url: `${BASE_URL}#custom-hook-depth`,
+      url: `${BASE_URL}#hook-o-gnese-custom-hook-depth`,
     },
     schema: [depthSchema],
     messages: baseMessages,
@@ -152,7 +152,7 @@ const customHookDepthRule: Rule.RuleModule = {
           "Add @typescript-eslint/parser to your ESLint config with one of:",
           "  parserOptions: { projectService: true }",
           "  parserOptions: { project: './tsconfig.json' }",
-          `See: ${BASE_URL}#custom-hook-depth`,
+          `See: ${BASE_URL}#hook-o-gnese-custom-hook-depth`,
         ].join("\n"),
       );
     }
