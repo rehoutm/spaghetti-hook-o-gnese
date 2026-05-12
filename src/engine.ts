@@ -11,6 +11,16 @@
 
 import { parseSync } from "oxc-parser";
 import { ALL_RULES } from "./rules/registry.ts";
+import type { Node } from "./ast-helpers.ts";
+import type { RuleContext } from "./rules/types.ts";
+
+// Rules are stored in ALL_RULES under oxlint's `Rule` type for plugin compat,
+// but the engine drives them through our internal `RuleContext` shape. This
+// alias is the engine-facing view of a rule and bypasses that mismatch in one
+// well-scoped place rather than at every call site.
+type InternalRule = {
+  create: (ctx: RuleContext) => Record<string, (n: Node) => void>;
+};
 
 /** Rule severity. `"off"` disables a rule entirely. */
 export type Severity = "off" | "warn" | "error";
@@ -80,11 +90,12 @@ function offsetToLineCol(
 }
 
 function getLoc(
-  node: any,
+  node: unknown,
   lineOffsets: number[],
 ): { line: number; column: number; endLine?: number; endColumn?: number } {
-  const startOffset = typeof node?.start === "number" ? node.start : undefined;
-  const endOffset = typeof node?.end === "number" ? node.end : undefined;
+  const n = node as { start?: unknown; end?: unknown } | null | undefined;
+  const startOffset = typeof n?.start === "number" ? n.start : undefined;
+  const endOffset = typeof n?.end === "number" ? n.end : undefined;
   if (startOffset === undefined) {
     return { line: 1, column: 1 };
   }
@@ -100,20 +111,24 @@ function getLoc(
   };
 }
 
-function walkAST(node: any, handlers: Record<string, any>) {
+function walkAST(
+  node: unknown,
+  handlers: Record<string, (n: Node) => void>,
+) {
   if (!node || typeof node !== "object") return;
-  const enter = handlers[node.type];
-  if (enter) enter(node);
-  for (const key in node) {
-    const v = node[key];
+  const n = node as Node;
+  const enter = handlers[n.type];
+  if (enter) enter(n);
+  for (const key in n) {
+    const v = n[key];
     if (Array.isArray(v)) {
       for (const c of v) walkAST(c, handlers);
     } else if (v && typeof v === "object") {
       walkAST(v, handlers);
     }
   }
-  const exit = handlers[`${node.type}:exit`];
-  if (exit) exit(node);
+  const exit = handlers[`${n.type}:exit`];
+  if (exit) exit(n);
 }
 
 /**
@@ -126,6 +141,7 @@ function walkAST(node: any, handlers: Record<string, any>) {
  * @param source The source code to lint.
  * @param config Resolved engine configuration.
  */
+// deno-lint-ignore require-await
 export async function lintFile(
   filePath: string,
   source: string,
@@ -147,9 +163,10 @@ export async function lintFile(
   const lineOffsets = buildLineOffsets(source);
 
   if (parsed.errors?.length) {
-    return parsed.errors.map((e: any) => {
-      const offset = typeof e.labels?.[0]?.start === "number"
-        ? e.labels[0].start
+    return parsed.errors.map((e) => {
+      const labels = (e as { labels?: Array<{ start?: unknown }> }).labels;
+      const offset = typeof labels?.[0]?.start === "number"
+        ? labels[0].start
         : undefined;
       const loc = offset !== undefined
         ? offsetToLineCol(offset, lineOffsets)
@@ -167,9 +184,13 @@ export async function lintFile(
 
   // Bail early on non-React files
   const imports = parsed.module?.staticImports ?? [];
-  const hasReact = imports.some((i: any) =>
-    (i.moduleRequest?.value ?? i.source?.value) === "react"
-  );
+  const hasReact = imports.some((i) => {
+    const ix = i as {
+      moduleRequest?: { value?: string };
+      source?: { value?: string };
+    };
+    return (ix.moduleRequest?.value ?? ix.source?.value) === "react";
+  });
   if (!hasReact) return [];
 
   const out: Diagnostic[] = [];
@@ -178,7 +199,9 @@ export async function lintFile(
     if (ruleCfg.severity === "off") continue;
     if (!config.typeAware && TYPE_AWARE_RULES.has(ruleId)) continue;
 
-    const rule = (ALL_RULES as any)[ruleNamespace(ruleId)];
+    const rule = ALL_RULES[ruleNamespace(ruleId)] as unknown as
+      | InternalRule
+      | undefined;
     if (!rule) continue;
 
     const localDiags: Diagnostic[] = [];
@@ -186,7 +209,9 @@ export async function lintFile(
       options: ruleCfg.options ? [ruleCfg.options] : [],
       filename: filePath,
       cwd: config.cwd,
-      report(d: { message: string; node: any; severity?: "warn" | "error" }) {
+      report(
+        d: { message: string; node: unknown; severity?: "warn" | "error" },
+      ) {
         const loc = getLoc(d.node, lineOffsets);
         const cfgSev = ruleCfg.severity as "warn" | "error";
         // Rule-emitted severity only escalates (warn → error); never downgrades.

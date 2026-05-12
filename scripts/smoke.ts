@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any no-inner-declarations
 // Phase 2 dogfood smoke runner. THROWAWAY — replaced by src/engine.ts + src/cli.ts in Tasks 11/13.
 // Walks a directory, parses TS/TSX/JS/JSX, runs the no-fat-effects rule, prints findings.
 //

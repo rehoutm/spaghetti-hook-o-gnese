@@ -45,7 +45,7 @@ Deno.test("no-fat-effects: clean effect produces no diagnostic", () => {
   const code = `
     function Foo() {
       useEffect(() => { setX(1); }, [x]);
-      return null;
+      return <div />;
     }
   `;
   const messages = linter.verify(code, makeConfig(), "test.tsx");
@@ -58,7 +58,7 @@ Deno.test("no-fat-effects: single dep no branches is clean", () => {
       useEffect(() => {
         fetch('/api/' + id).then(setData);
       }, [id]);
-      return null;
+      return <div />;
     }
   `;
   const messages = linter.verify(code, makeConfig(), "test.tsx");
@@ -69,7 +69,7 @@ Deno.test("no-fat-effects: no effect call is clean", () => {
   const code = `
     function Foo() {
       const [x, setX] = useState(0);
-      return null;
+      return <div />;
     }
   `;
   const messages = linter.verify(code, makeConfig(), "test.tsx");
@@ -110,26 +110,15 @@ Deno.test("no-fat-effects: fat effect over default threshold reports warn messag
         }
       }, [userId, region, locale, theme, currency]);
 
-      return null;
+      return <div />;
     }
   `;
   const messages = linter.verify(code, makeConfig(), "test.tsx");
   const ruleMessages = messages.filter((m) =>
     m.ruleId === "hook-o-gnese/no-fat-effects"
   );
-  assertEquals(
-    ruleMessages.length >= 1,
-    true,
-    `Expected at least 1 diagnostic, got: ${JSON.stringify(messages)}`,
-  );
-  const ids = ruleMessages.map((m) => m.messageId);
-  for (const id of ids) {
-    assertEquals(
-      ["warn", "error"].includes(id as string),
-      true,
-      `Unexpected messageId: ${id}`,
-    );
-  }
+  assertEquals(ruleMessages.length, 1);
+  assertEquals(ruleMessages[0].messageId, "error");
 });
 
 Deno.test("no-fat-effects: custom low threshold triggers warn", () => {
@@ -138,7 +127,7 @@ Deno.test("no-fat-effects: custom low threshold triggers warn", () => {
       useEffect(() => {
         if (a) setX(1);
       }, [a, b]);
-      return null;
+      return <div />;
     }
   `;
   // threshold=1 means any score ≥ 1 fires; deps=2 + branch=1*2 + setState=1*1.5 = 5.5 total
@@ -150,11 +139,7 @@ Deno.test("no-fat-effects: custom low threshold triggers warn", () => {
   const ruleMessages = messages.filter((m) =>
     m.ruleId === "hook-o-gnese/no-fat-effects"
   );
-  assertEquals(
-    ruleMessages.length >= 1,
-    true,
-    `Expected diagnostic, got: ${JSON.stringify(messages)}`,
-  );
+  assertEquals(ruleMessages.length, 1);
   assertEquals(ruleMessages[0].messageId, "warn");
 });
 
@@ -165,7 +150,7 @@ Deno.test("no-fat-effects: errorThreshold triggers error messageId", () => {
       useEffect(() => {
         if (a) setX(1);
       }, [a, b]);
-      return null;
+      return <div />;
     }
   `;
   const messages = linter.verify(
@@ -176,11 +161,7 @@ Deno.test("no-fat-effects: errorThreshold triggers error messageId", () => {
   const ruleMessages = messages.filter((m) =>
     m.ruleId === "hook-o-gnese/no-fat-effects"
   );
-  assertEquals(
-    ruleMessages.length >= 1,
-    true,
-    `Expected diagnostic, got: ${JSON.stringify(messages)}`,
-  );
+  assertEquals(ruleMessages.length, 1);
   assertEquals(ruleMessages[0].messageId, "error");
 });
 
@@ -217,13 +198,13 @@ Deno.test("no-fat-effects: message text contains 'entropy'", () => {
         }
       }, [userId, region, locale, theme, currency]);
 
-      return null;
+      return <div />;
     }
   `;
   const messages = linter.verify(code, makeConfig(), "test.tsx");
   const ruleMessages = messages.filter((m) =>
     m.ruleId === "hook-o-gnese/no-fat-effects"
   );
-  assertEquals(ruleMessages.length >= 1, true);
+  assertEquals(ruleMessages.length, 1);
   assertMatch(ruleMessages[0].message, /entropy/);
 });

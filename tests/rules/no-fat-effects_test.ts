@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 // tests/rules/no-fat-effects_test.ts
 import { assert, assertEquals } from "@std/assert";
 import { parseSync } from "oxc-parser";
@@ -55,7 +56,44 @@ Deno.test("no-fat-effects: fat effect over warn threshold reports", async () => 
 });
 
 Deno.test("no-fat-effects: custom threshold via options", () => {
-  const code = `useEffect(() => { if (a) setX(1); }, [a, b]);`;
+  const code =
+    `function Foo() { useEffect(() => { if (a) setX(1); }, [a, b]); return <div />; }`;
   const diags = runRule(noFatEffects, code, [{ threshold: 1 }]);
   assert(diags.length >= 1);
+});
+
+Deno.test("no-fat-effects: aggregates passthrough useCallback body", () => {
+  // The effect itself is trivial — but it passes through a useCallback whose
+  // body is fat. Aggregated score must cross the threshold; without
+  // aggregation it would slip through.
+  const code = `function Foo({ a, b, c, d }) {
+    const doIt = useCallback(() => {
+      if (a) setX(1);
+      if (b) setY(2);
+      if (c) setZ(3);
+      addEventListener('click', () => {});
+    }, [a, b, c, d]);
+    useEffect(() => doIt(), [doIt]);
+    return <div />;
+  }`;
+  const diags = runRule(noFatEffects, code);
+  assert(
+    diags.length >= 1,
+    `expected aggregated effect to fire, got ${diags.length}`,
+  );
+  assert(
+    diags[0].message.includes("aggregated-from=doIt"),
+    `expected aggregated-from in message, got: ${diags[0].message}`,
+  );
+});
+
+Deno.test("no-fat-effects: no aggregation when callback resolved outside component", () => {
+  // doIt is a named import / outer binding — we can't see its body, so we
+  // don't add anything. The trivial passthrough effect stays clean.
+  const code = `function Foo({ doIt }) {
+    useEffect(() => doIt(), [doIt]);
+    return <div />;
+  }`;
+  const diags = runRule(noFatEffects, code);
+  assertEquals(diags.length, 0);
 });

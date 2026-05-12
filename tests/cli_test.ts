@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 // tests/cli_test.ts
 import { assert, assertEquals } from "@std/assert";
 

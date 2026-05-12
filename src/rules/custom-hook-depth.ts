@@ -1,7 +1,7 @@
 import { TsProgramCache } from "../ts-program.ts";
 import { DEFAULT_THRESHOLDS } from "../scoring/thresholds.ts";
-import { getHookName } from "../ast-helpers.ts";
-import type { RuleContext } from "./no-fat-effects.ts";
+import { getHookName, type Node } from "../ast-helpers.ts";
+import type { RuleContext } from "./types.ts";
 
 interface Options {
   maxDepth?: number;
@@ -56,7 +56,7 @@ export const customHookDepth = {
     const filename = context.filename;
 
     return {
-      CallExpression(node: any) {
+      CallExpression(node: Node) {
         const name = getHookName(node);
         if (!name || REACT_HOOKS.has(name)) return;
         if (!filename) return;

@@ -1,12 +1,12 @@
-type Node = { type: string; [k: string]: unknown };
+export type Node = { type: string; [k: string]: unknown };
 
 const HOOK_RE = /^use[A-Z]/;
 
 export function getHookName(node: Node): string | null {
   if (node.type !== "CallExpression") return null;
-  const callee = (node as any).callee as Node;
+  const callee = node.callee as Node;
   if (callee?.type !== "Identifier") return null;
-  const name = (callee as any).name as string;
+  const name = callee.name as string;
   return HOOK_RE.test(name) ? name : null;
 }
 
@@ -16,13 +16,16 @@ export function isHookCall(node: Node, expected: string): boolean {
 
 export function isReactComponent(node: Node): boolean {
   if (node.type === "FunctionDeclaration") {
-    const name = (node as any).id?.name as string | undefined;
+    const id = node.id as Node | undefined;
+    const name = id?.name as string | undefined;
     if (!name || !/^[A-Z]/.test(name)) return false;
     return findReturnsJSX(node);
   }
   if (node.type === "VariableDeclaration") {
-    const decl = (node as any).declarations?.[0];
-    const name = decl?.id?.name as string | undefined;
+    const decls = node.declarations as Node[] | undefined;
+    const decl = decls?.[0];
+    const declId = decl?.id as Node | undefined;
+    const name = declId?.name as string | undefined;
     const init = decl?.init as Node | undefined;
     if (!name || !/^[A-Z]/.test(name) || !init) return false;
     if (
@@ -51,6 +54,22 @@ export function findReturnsJSX(node: Node): boolean {
   return found;
 }
 
+/**
+ * Walks `root` but stops descending into nested React components. The root
+ * itself is always visited; any *other* node that `isReactComponent()` accepts
+ * is treated as a scope boundary so its hooks are not folded into the parent
+ * component's score.
+ */
+export function walkComponentBody(
+  root: Node,
+  visit: (n: Node) => boolean | void,
+): void {
+  walk(root, (n) => {
+    if (n !== root && isReactComponent(n)) return false;
+    return visit(n);
+  });
+}
+
 export function walk(
   node: Node,
   visit: (n: Node) => boolean | void,
@@ -62,7 +81,7 @@ export function walk(
   if (cont === false) return;
   for (const key in node) {
     if (key === "parent") continue;
-    const val = (node as any)[key];
+    const val = node[key];
     if (Array.isArray(val)) {
       for (const child of val) {
         if (child && typeof child === "object" && "type" in child) {

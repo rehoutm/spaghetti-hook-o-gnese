@@ -27,7 +27,7 @@ import { stateScatter } from "./rules/state-scatter.ts";
 import { hookCoupling } from "./rules/hook-coupling.ts";
 import { customHookDepth } from "./rules/custom-hook-depth.ts";
 import { TsProgramCache } from "./ts-program.ts";
-import type { RuleContext } from "./rules/no-fat-effects.ts";
+import type { RuleContext } from "./rules/types.ts";
 
 // ---------------------------------------------------------------------------
 // Internal types
@@ -119,8 +119,8 @@ function wrapRule(
         filename: eslintContext.filename,
         cwd: eslintContext.cwd,
         report({ message, node, severity }) {
-          // deno-lint-ignore no-explicit-any
           eslintContext.report({
+            // deno-lint-ignore no-explicit-any
             node: node as any,
             messageId: severity ?? "warn",
             data: { detail: message },
@@ -168,8 +168,8 @@ const customHookDepthRule: Rule.RuleModule = {
       cwd: eslintContext.cwd,
       tsProgramCache,
       report({ message, node, severity }) {
-        // deno-lint-ignore no-explicit-any
         eslintContext.report({
+          // deno-lint-ignore no-explicit-any
           node: node as any,
           messageId: severity ?? "warn",
           data: { detail: message },
