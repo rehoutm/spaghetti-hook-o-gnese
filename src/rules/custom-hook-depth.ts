@@ -41,13 +41,18 @@ export const customHookDepth = {
     const maxDepth = opts.maxDepth ?? DEFAULT_THRESHOLDS.customHookDepth.warn;
     const errorMaxDepth = opts.errorMaxDepth ??
       DEFAULT_THRESHOLDS.customHookDepth.error;
-    const g = globalThis as {
-      Deno?: { cwd(): string };
-      process?: { cwd(): string };
-    };
-    const cwd = context.cwd ?? g.process?.cwd() ?? g.Deno?.cwd() ?? ".";
-    sharedCache ??= new TsProgramCache(cwd);
-    const cache = sharedCache;
+    let cache: TsProgramCache;
+    if (context.tsProgramCache) {
+      cache = context.tsProgramCache;
+    } else {
+      const g = globalThis as {
+        Deno?: { cwd(): string };
+        process?: { cwd(): string };
+      };
+      const cwd = context.cwd ?? g.process?.cwd() ?? g.Deno?.cwd() ?? ".";
+      sharedCache ??= new TsProgramCache(cwd);
+      cache = sharedCache;
+    }
     const filename = context.filename;
 
     return {

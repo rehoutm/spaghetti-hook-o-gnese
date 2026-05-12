@@ -11,6 +11,8 @@ export interface RuleContext {
   options: unknown[];
   filename?: string;
   cwd?: string;
+  /** Optional pre-built TsProgramCache injected by the ESLint adapter. */
+  tsProgramCache?: import("../ts-program.ts").TsProgramCache;
   report: (d: {
     message: string;
     node: unknown;
